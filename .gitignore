@@ -102,3 +102,6 @@ ENV/
 
 # Databes
 *.sqlite3
+
+# Pylint
+.pylintrc

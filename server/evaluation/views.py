@@ -48,6 +48,12 @@ def post_predicted_masks(request):
 @json_response
 @require_GET
 def get_report(request):
+    """ Return the report for a single session.
+    """
     session_key = request.META.get('HTTP_SESSION_KEY')
-    df = SERVICE.get_report(session_id=session_key)
-    return df.to_json()
+    df = SERVICE.get_report(session_id=session_key).copy()
+    df = df.groupby(
+        ['session_id', 'sequence', 'scribble_idx', 'interaction',
+         'object_id']).mean()
+    df = df.reset_index()
+    return df.to_dict()
