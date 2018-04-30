@@ -117,3 +117,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Evaluation Settings
+EVALUATION_SUBSET = os.environ.get('SUBSET', 'test-dev')
+EVALUATION_DAVIS_ROOT = os.environ.get(
+    'DAVIS_ROOT', '/Users/alberto/Workspace/CVL/datasets/davis-2017/data/DAVIS')
+EVALUATION_MAX_TIME = os.environ.get('MAX_TIME', 3600)
+EVALUATION_MAX_INTERACTIONS = os.environ.get('MAX_INTERACTIONS', 10)

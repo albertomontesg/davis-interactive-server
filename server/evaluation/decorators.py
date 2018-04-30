@@ -1,6 +1,9 @@
 import json
+from functools import wraps
 
 from django.http import HttpResponse, JsonResponse
+
+from .evaluation import EvaluationService
 
 
 def json_response(func):
@@ -17,5 +20,16 @@ def json_response(func):
         if isinstance(objects, HttpResponse):
             return objects
         return JsonResponse(objects, safe=False)
+
+    return decorator
+
+
+def require_service(func):
+
+    def decorator(*args, **kwargs):
+        service = EvaluationService()
+        kwargs['service'] = service
+        response = func(*args, **kwargs)
+        return response
 
     return decorator

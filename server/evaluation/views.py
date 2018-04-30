@@ -3,17 +3,9 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from davisinteractive.evaluation import EvaluationService
 from davisinteractive.third_party import mask_api
 
-from .decorators import json_response
-
-# Create your views here.
-SERVICE = EvaluationService(
-    'test-dev',
-    davis_root='/Users/alberto/Workspace/CVL/datasets/davis-2017/data/DAVIS',
-    max_t=3600,
-    max_i=10)
+from .decorators import json_response, require_service
 
 
 @json_response
@@ -26,27 +18,31 @@ def get_health(_):
 
 @json_response
 @require_GET
-def get_dataset_samples(_):
+@require_service
+def get_dataset_samples(_, service):
     """ Return the dataset samples.
     """
-    response = SERVICE.get_samples()
+    response = service.get_samples()
 
     return response
 
 
 @json_response
 @require_GET
-def get_scibble(_, sequence, scribble_idx):
+@require_service
+def get_scribble(_, sequence, scribble_idx, service, **kwargs):
     """ Return the scribble asked.
     """
-    response = SERVICE.get_scribble(sequence, scribble_idx)
+    print(sequence, scribble_idx, service)
+    response = service.get_scribble(sequence, scribble_idx)
     return response
 
 
 @csrf_exempt
 @json_response
 @require_POST
-def post_predicted_masks(request):
+@require_service
+def post_predicted_masks(request, service):
     """ Post the predicted masks and return a new scribble.
     """
     user_key = request.META.get('HTTP_USER_KEY')
@@ -56,17 +52,18 @@ def post_predicted_masks(request):
     params['user_key'] = user_key
     params['session_key'] = session_key
 
-    response = SERVICE.post_predicted_masks(**params)
+    response = service.post_predicted_masks(**params)
     return response
 
 
 @json_response
 @require_GET
-def get_report(request):
+@require_service
+def get_report(request, service):
     """ Return the report for a single session.
     """
     session_key = request.META.get('HTTP_SESSION_KEY')
-    df = SERVICE.get_report(session_id=session_key).copy()
+    df = service.get_report(session_id=session_key).copy()
     if len(df) > 0:
         df = df.groupby([
             'session_id', 'sequence', 'scribble_idx', 'interaction', 'object_id'
