@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Result, Session
+
+
+@admin.register(Session)
+class SessionAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    pass

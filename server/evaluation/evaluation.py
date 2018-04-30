@@ -2,6 +2,8 @@ from django.conf import settings
 
 from davisinteractive.evaluation import EvaluationService as _EvaluationService
 
+from .storage import DBStorage
+
 
 class EvaluationService(object):
     """ Singleton wrapper over EvaluationService class"""
@@ -11,6 +13,7 @@ class EvaluationService(object):
         if not EvaluationService.instance:
             EvaluationService.instance = _EvaluationService(
                 settings.EVALUATION_SUBSET,
+                storage=DBStorage,
                 davis_root=settings.EVALUATION_DAVIS_ROOT,
                 max_t=settings.EVALUATION_MAX_TIME,
                 max_i=settings.EVALUATION_MAX_INTERACTIONS)

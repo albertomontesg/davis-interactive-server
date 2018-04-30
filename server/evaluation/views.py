@@ -33,7 +33,6 @@ def get_dataset_samples(_, service):
 def get_scribble(_, sequence, scribble_idx, service, **kwargs):
     """ Return the scribble asked.
     """
-    print(sequence, scribble_idx, service)
     response = service.get_scribble(sequence, scribble_idx)
     return response
 
