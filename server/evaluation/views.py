@@ -1,7 +1,8 @@
+""" Server views for evaluation.
+"""
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from davisinteractive.dataset import Davis
 from davisinteractive.evaluation import EvaluationService
 from davisinteractive.third_party import mask_api
 
@@ -17,7 +18,17 @@ SERVICE = EvaluationService(
 
 @json_response
 @require_GET
+def get_health(_):
+    """ Return Healt status.
+    """
+    return {'health': 'OK', 'name': 'DAVIS Interactive Server', 'magic': 23}
+
+
+@json_response
+@require_GET
 def get_dataset_samples(_):
+    """ Return the dataset samples.
+    """
     response = SERVICE.get_samples()
 
     return response
@@ -26,6 +37,8 @@ def get_dataset_samples(_):
 @json_response
 @require_GET
 def get_scibble(_, sequence, scribble_idx):
+    """ Return the scribble asked.
+    """
     response = SERVICE.get_scribble(sequence, scribble_idx)
     return response
 
@@ -34,6 +47,8 @@ def get_scibble(_, sequence, scribble_idx):
 @json_response
 @require_POST
 def post_predicted_masks(request):
+    """ Post the predicted masks and return a new scribble.
+    """
     user_key = request.META.get('HTTP_USER_KEY')
     session_key = request.META.get('HTTP_SESSION_KEY')
     params = request.json
@@ -52,8 +67,9 @@ def get_report(request):
     """
     session_key = request.META.get('HTTP_SESSION_KEY')
     df = SERVICE.get_report(session_id=session_key).copy()
-    df = df.groupby(
-        ['session_id', 'sequence', 'scribble_idx', 'interaction',
-         'object_id']).mean()
-    df = df.reset_index()
+    if len(df) > 0:
+        df = df.groupby([
+            'session_id', 'sequence', 'scribble_idx', 'interaction', 'object_id'
+        ]).mean()
+        df = df.reset_index()
     return df.to_dict()
