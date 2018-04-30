@@ -16,8 +16,11 @@ class Session(models.Model):
             session.save()
         return session
 
+    def __str__(self):
+        return f'{self.user_id}@{self.session_id[:8]}'
 
-class Result(models.Model):
+
+class ResultEntry(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
     # Entry params
     sequence = models.CharField(max_length=128, blank=False)

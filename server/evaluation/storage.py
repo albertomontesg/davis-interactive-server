@@ -2,7 +2,7 @@ import pandas as pd
 
 from davisinteractive.storage import AbstractStorage
 
-from .models import Result, Session
+from .models import ResultEntry, Session
 
 
 class DBStorage(AbstractStorage):
@@ -31,8 +31,25 @@ class DBStorage(AbstractStorage):
         """
         session = Session.get_or_create_session(user_id, session_id)
 
+        if ResultEntry.objects.filter(
+                session__session_id=session_id,
+                sequence=sequence,
+                scribble_idx=scribble_idx,
+                interaction=interaction).count():
+            raise RuntimeError(('For {} and scribble {} already exist a '
+                                'result for interaction {}').format(
+                                    sequence, scribble_idx, interaction))
+        if interaction > 1 and ResultEntry.objects.filter(
+                session__session_id=session_id,
+                sequence=sequence,
+                scribble_idx=scribble_idx,
+                interaction=interaction - 1).count():
+            raise RuntimeError(('For {} and scribble {} does not exist a '
+                                'result for previous interaction {}').format(
+                                    sequence, scribble_idx, interaction - 1))
+
         results = [
-            Result(
+            ResultEntry(
                 session=session,
                 sequence=sequence,
                 scribble_idx=scribble_idx,
@@ -43,7 +60,7 @@ class DBStorage(AbstractStorage):
                 jaccard=j,
             ) for o_id, f, j in zip(objects_idx, frames, jaccard)
         ]
-        Result.objects.bulk_create(results)
+        ResultEntry.objects.bulk_create(results)
 
     @staticmethod
     def get_report(user_id=None, session_id=None):
@@ -55,7 +72,7 @@ class DBStorage(AbstractStorage):
         # Returns
             Pandas DataFrame. Report in the form of the DataFrame.
         """
-        query = Result.objects.filter(
+        query = ResultEntry.objects.filter(
             session__session_id=session_id).values(*DBStorage.COLUMNS)
         df = pd.DataFrame.from_records(query)
         return df
