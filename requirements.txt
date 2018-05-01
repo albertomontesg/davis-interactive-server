@@ -1,2 +1,2 @@
 Django==2.0.4
--e git+git@github.com:albertomontesg/davis-interactive.git@39d86ef1c98237e2b06abdc306f257fe439ec738#egg=davisinteractive
+git+https://github.com/albertomontesg/davis-interactive.git#egg=davisinteractive
