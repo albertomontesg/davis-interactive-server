@@ -108,3 +108,6 @@ ENV/
 
 # Static
 static/
+
+# pytest
+.pytest_cache/

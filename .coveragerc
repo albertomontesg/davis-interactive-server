@@ -1,0 +1,18 @@
+[run]
+branch = True
+source = davisinteractive
+omit = manage.py
+
+[report]
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise ValueError
+    raise TypeError
+    raise RuntimeError
+    raise NotImplementedError
+
+ignore_errors = True
