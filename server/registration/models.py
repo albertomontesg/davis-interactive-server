@@ -2,6 +2,8 @@ import binascii
 import os
 
 from django import forms
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db import models
 from django.forms import ModelForm
 from django.utils import timezone
@@ -21,6 +23,13 @@ class Participant(models.Model):
     def generate_key(self):
         self.user_id = binascii.hexlify(os.urandom(32)).decode()
         return self
+
+    def email_participant(self, subject, message):
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_FROM, [self.email],
+            fail_silently=False)
 
 
 class RegistrationForm(ModelForm):
