@@ -5,11 +5,11 @@ from .models import ResultEntry, Session
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    fields = ('session_id', 'user_id', 'start_timestamp', 'completed')
-    list_display = ('user_id', 'hash_session_id', 'start_timestamp',
+    fields = ('session_id', 'participant', 'start_timestamp', 'completed')
+    list_display = ('participant', 'hash_session_id', 'start_timestamp',
                     'completed')
-    list_filter = ('user_id', 'start_timestamp', 'completed')
-    readonly_fields = ('session_id', 'user_id', 'start_timestamp')
+    list_filter = ('participant', 'start_timestamp', 'completed')
+    readonly_fields = ('session_id', 'participant', 'start_timestamp')
     actions = []
 
     def hash_session_id(self, obj):

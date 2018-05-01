@@ -105,3 +105,6 @@ ENV/
 
 # Pylint
 .pylintrc
+
+# Static
+static/

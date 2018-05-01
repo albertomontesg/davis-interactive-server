@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'registration.apps.RegistrationConfig',
     'evaluation.apps.EvaluationConfig',
 ]
 
@@ -117,6 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Evaluation Settings
 EVALUATION_SUBSET = os.environ.get('SUBSET', 'test-dev')

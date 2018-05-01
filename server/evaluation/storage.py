@@ -32,7 +32,7 @@ class DBStorage(AbstractStorage):
         session = Session.get_or_create_session(user_id, session_id)
 
         if ResultEntry.objects.filter(
-                session__session_id=session_id,
+                session=session,
                 sequence=sequence,
                 scribble_idx=scribble_idx,
                 interaction=interaction).count():
@@ -40,10 +40,10 @@ class DBStorage(AbstractStorage):
                                 'result for interaction {}').format(
                                     sequence, scribble_idx, interaction))
         if interaction > 1 and ResultEntry.objects.filter(
-                session__session_id=session_id,
+                session=session,
                 sequence=sequence,
                 scribble_idx=scribble_idx,
-                interaction=interaction - 1).count():
+                interaction=interaction - 1).count() == 0:
             raise RuntimeError(('For {} and scribble {} does not exist a '
                                 'result for previous interaction {}').format(
                                     sequence, scribble_idx, interaction - 1))
