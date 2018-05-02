@@ -5,6 +5,7 @@ python:
   - "3.6"
 cache: pip
 install:
+  - cd code
   - pip install codecov pytest-django pytest-cov numpy Cython
   - pip install -r requirements.txt
 script:
