@@ -17,7 +17,8 @@ def registration(request):
 
             participant.email_participant('DAVIS Challenge Registration',
                                           message)
-            return render(request, 'success.html')
+
+            return render(request, 'success.html', {'participant': participant})
     else:
         form = RegistrationForm()
 

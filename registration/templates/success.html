@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 
+{% block tabtitle %}
+Registration Form Success
+{% endblock %}
+
+{% block title %}
+DAVIS Interactive Registration Form
+{% endblock %}
+
 {% block content %}
-  <p>Registration Succed</p>
+	<h2 style="color:#0fad00">Registration Success</h2>
+  <h4>Dear {{ participant.name }},</h4>
+  <p style="font-size:20px;color:#5C5C5C;">
+	Thank you for registering on the DAVIS Interactive Challenge. 
+	We have sent you an email with the key to participate.
+	</p>
 {% endblock %}
