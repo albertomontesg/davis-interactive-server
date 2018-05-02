@@ -1,4 +1,5 @@
 import json
+import traceback
 from functools import wraps
 
 from django.http import HttpResponse, JsonResponse
@@ -6,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from .evaluation import EvaluationService
 
 
-def json_response(func):
+def json_api(func):
 
     def decorator(request, *args, **kwargs):
         if request.content_type == 'application/json':
@@ -14,12 +15,19 @@ def json_response(func):
                 request.json = json.loads(request.body)
             else:
                 request.json = None
+        try:
+            objects = func(request, *args, **kwargs)
 
-        objects = func(request, *args, **kwargs)
-
-        if isinstance(objects, HttpResponse):
-            return objects
-        return JsonResponse(objects, safe=False)
+            if isinstance(objects, HttpResponse):
+                return objects
+            return JsonResponse(objects, safe=False)
+        except Exception as e:
+            print(traceback.format_exc())
+            error_body = {
+                'error': e.__class__.__name__,
+                'message': list(e.args)
+            }
+            return JsonResponse(error_body, status=400)
 
     return decorator
 

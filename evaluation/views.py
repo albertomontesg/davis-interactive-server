@@ -1,14 +1,13 @@
 """ Server views for evaluation.
 """
+from davisinteractive.third_party import mask_api
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from davisinteractive.third_party import mask_api
-
-from .decorators import json_response, require_service
+from .decorators import json_api, require_service
 
 
-@json_response
+@json_api
 @require_GET
 def get_health(_):
     """ Return Healt status.
@@ -16,7 +15,7 @@ def get_health(_):
     return {'health': 'OK', 'name': 'DAVIS Interactive Server', 'magic': 23}
 
 
-@json_response
+@json_api
 @require_GET
 @require_service
 def get_dataset_samples(_, service):
@@ -27,7 +26,7 @@ def get_dataset_samples(_, service):
     return response
 
 
-@json_response
+@json_api
 @require_GET
 @require_service
 def get_scribble(_, sequence, scribble_idx, service, **kwargs):
@@ -38,7 +37,7 @@ def get_scribble(_, sequence, scribble_idx, service, **kwargs):
 
 
 @csrf_exempt
-@json_response
+@json_api
 @require_POST
 @require_service
 def post_predicted_masks(request, service):
@@ -55,7 +54,7 @@ def post_predicted_masks(request, service):
     return response
 
 
-@json_response
+@json_api
 @require_GET
 @require_service
 def get_report(request, service):
