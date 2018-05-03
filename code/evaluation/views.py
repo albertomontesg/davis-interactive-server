@@ -4,7 +4,7 @@ from davisinteractive.third_party import mask_api
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from .decorators import json_api, require_service
+from .decorators import authorize, json_api, require_service
 
 
 @json_api
@@ -40,11 +40,10 @@ def get_scribble(_, sequence, scribble_idx, service, **kwargs):
 @json_api
 @require_POST
 @require_service
-def post_predicted_masks(request, service):
+@authorize
+def post_predicted_masks(request, service, user_key, session_key):
     """ Post the predicted masks and return a new scribble.
     """
-    user_key = request.META.get('HTTP_USER_KEY')
-    session_key = request.META.get('HTTP_SESSION_KEY')
     params = request.json
     params['pred_masks'] = mask_api.decode_batch_masks(params['pred_masks'])
     params['user_key'] = user_key
@@ -57,14 +56,15 @@ def post_predicted_masks(request, service):
 @json_api
 @require_GET
 @require_service
-def get_report(request, service):
+@authorize
+def get_report(request, service, session_key, user_key=None):
     """ Return the report for a single session.
     """
-    session_key = request.META.get('HTTP_SESSION_KEY')
     df = service.get_report(session_id=session_key).copy()
     if len(df) > 0:
         df = df.groupby([
             'session_id', 'sequence', 'scribble_idx', 'interaction', 'object_id'
         ]).mean()
+        df = df.drop(columns='frame')
         df = df.reset_index()
     return df.to_dict()

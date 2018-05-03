@@ -4,6 +4,8 @@ from functools import wraps
 
 from django.http import HttpResponse, JsonResponse
 
+from registration.models import Participant
+
 from .evaluation import EvaluationService
 
 
@@ -38,6 +40,26 @@ def require_service(func):
         service = EvaluationService()
         kwargs['service'] = service
         response = func(*args, **kwargs)
+        return response
+
+    return decorator
+
+
+def authorize(func):
+
+    def decorator(request, *args, **kwargs):
+        user_key = request.META.get('HTTP_USER_KEY')
+        session_key = request.META.get('HTTP_SESSION_KEY')
+        participant = Participant.objects.filter(user_id=user_key).first()
+        if not user_key or not session_key or not participant:
+            return JsonResponse(
+                {
+                    'error': 'Invalid user_key or session_key'
+                }, status=401)
+
+        kwargs['user_key'] = user_key
+        kwargs['session_key'] = session_key
+        response = func(request, *args, **kwargs)
         return response
 
     return decorator
