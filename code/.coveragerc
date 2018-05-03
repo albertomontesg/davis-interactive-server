@@ -1,7 +1,9 @@
 [run]
 branch = True
 source = davisinteractive
-omit = manage.py
+omit = 
+        manage.py
+        server/wsgi.py
 
 [report]
 exclude_lines =

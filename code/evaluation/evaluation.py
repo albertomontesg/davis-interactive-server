@@ -1,6 +1,5 @@
-from django.conf import settings
-
 from davisinteractive.evaluation import EvaluationService as _EvaluationService
+from django.conf import settings
 
 from .storage import DBStorage
 
@@ -19,8 +18,8 @@ class EvaluationService(object):
                 max_i=settings.EVALUATION_MAX_INTERACTIONS)
         return EvaluationService.instance
 
-    def __getattr__(self, name):
+    def __getattr__(self, name):  # pragma: no cover
         return getattr(self.instance, name)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name, value):  # pragma: no cover
         return setattr(self.instance, name, value)
