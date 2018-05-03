@@ -1,0 +1,17 @@
+version: '3.6'
+
+services:
+  django:
+    labels:
+      org.davisinteractive.service: "api"
+      org.davisinteractive.description: "DAVIS Interactive service for remote evaluation"
+    build:
+      context: .
+      dockerfile: deployment/django/Dockerfile
+    image: davisinteractive:latest
+    container_name: davisinteractive_django
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./code:/app
+      - ./data/DAVIS:/media/DAVIS

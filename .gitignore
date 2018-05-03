@@ -111,3 +111,6 @@ static/
 
 # pytest
 .pytest_cache/
+
+# DAVIS dataset
+data/
