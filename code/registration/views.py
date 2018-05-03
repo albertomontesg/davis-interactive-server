@@ -23,7 +23,3 @@ def registration(request):
         form = RegistrationForm()
 
     return render(request, 'registration.html', {'form': form})
-
-
-def success(request):
-    return render(request, 'success.html')

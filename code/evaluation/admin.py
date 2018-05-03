@@ -12,7 +12,7 @@ class SessionAdmin(admin.ModelAdmin):
     readonly_fields = ('session_id', 'participant', 'start_timestamp')
     actions = []
 
-    def hash_session_id(self, obj):
+    def hash_session_id(self, obj):  # pragma: no cover
         return obj.session_id[:8]
 
 
