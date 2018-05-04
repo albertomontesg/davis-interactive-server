@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'evaluation.apps.EvaluationConfig',
     'widget_tweaks',
+    'django_countries',
 ]
 
 MIDDLEWARE = [

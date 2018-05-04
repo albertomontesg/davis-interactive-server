@@ -36,6 +36,7 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': 'Company SA',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         form = RegistrationForm(data=form_data)
@@ -45,6 +46,7 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': 'Company SA',
+            'country': 'CH',
             'email': 'johnexample.com'
         }
         form = RegistrationForm(data=form_data)
@@ -54,6 +56,7 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': 'C',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         form = RegistrationForm(data=form_data)
@@ -63,6 +66,7 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': '',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         form = RegistrationForm(data=form_data)
@@ -72,6 +76,7 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': 'JD',
             'organization': 'Company',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         form = RegistrationForm(data=form_data)
@@ -81,12 +86,23 @@ class RegistrationFormTestCase(TestCase):
         form_data = {
             'name': '',
             'organization': 'Company',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         form = RegistrationForm(data=form_data)
         self.assertFalse(form.is_valid())
 
-    def test_valid_six(self):
-        form_data = {'name': '', 'organization': '', 'email': ''}
+    def test_invalid_six(self):
+        form_data = {
+            'name': 'John Doe',
+            'organization': 'Company SA',
+            'country': 'XX',
+            'email': 'john@example.com'
+        }
+        form = RegistrationForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    def test_valid_seven(self):
+        form_data = {'name': '', 'organization': '', 'country': '', 'email': ''}
         form = RegistrationForm(data=form_data)
         self.assertFalse(form.is_valid())

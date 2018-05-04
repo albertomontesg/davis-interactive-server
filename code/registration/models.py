@@ -7,6 +7,8 @@ from django.core.mail import send_mail
 from django.db import models
 from django.forms import ModelForm
 from django.utils import timezone
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
 
 
 class Participant(models.Model):
@@ -14,6 +16,7 @@ class Participant(models.Model):
         max_length=128, unique=True, primary_key=True, blank=False, null=False)
     name = models.CharField(max_length=254, blank=False, null=False)
     organization = models.CharField(max_length=254, blank=False, null=False)
+    country = CountryField(blank=False, null=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     registration_datetime = models.DateTimeField(default=timezone.now)
 
@@ -40,4 +43,5 @@ class RegistrationForm(ModelForm):
 
     class Meta:
         model = Participant
-        fields = ['name', 'organization', 'email']
+        fields = ['name', 'organization', 'country', 'email']
+        widgets = {'country': CountrySelectWidget()}

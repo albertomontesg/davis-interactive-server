@@ -15,6 +15,7 @@ class RegistrationViewTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': 'Company SA',
+            'country': 'CH',
             'email': 'johnexample.com'
         }
         response = self.client.post('/registration/', form_data)
@@ -30,6 +31,7 @@ class RegistrationViewTestCase(TestCase):
         form_data = {
             'name': 'John Doe',
             'organization': 'Company SA',
+            'country': 'CH',
             'email': 'john@example.com'
         }
         response = self.client.post('/registration/', form_data)
