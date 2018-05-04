@@ -11,6 +11,7 @@ EVALUATION_SUBSET = os.environ.get('SUBSET')
 EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT')
 EVALUATION_MAX_TIME = os.environ.get('MAX_TIME')
 EVALUATION_MAX_INTERACTIONS = os.environ.get('MAX_INTERACTIONS')
+assert EVALUATION_MAX_INTERACTIONS is not None
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

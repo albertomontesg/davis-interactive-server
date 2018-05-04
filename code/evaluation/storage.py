@@ -1,5 +1,4 @@
 import pandas as pd
-
 from davisinteractive.storage import AbstractStorage
 
 from .models import ResultEntry, Session
@@ -61,6 +60,8 @@ class DBStorage(AbstractStorage):
             ) for o_id, f, j in zip(objects_idx, frames, jaccard)
         ]
         ResultEntry.objects.bulk_create(results)
+        num_new_entries = len(results)
+        session.update_entries(num_new_entries)
 
     @staticmethod
     def get_report(user_id=None, session_id=None):

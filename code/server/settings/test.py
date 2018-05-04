@@ -9,7 +9,7 @@ SECRET_KEY = 'd9ns*-47^jva++xnop-$+sn&p!!7g4h8-s!a3+7b0-j)c!as*h'
 DEBUG = False
 
 # Evaluation Settings
-EVALUATION_SUBSET = os.environ.get('SUBSET', 'test-dev')
+EVALUATION_SUBSET = 'test-dev'
 EVALUATION_DAVIS_ROOT = os.path.join(tempfile.mkdtemp(), 'DAVIS')
-EVALUATION_MAX_TIME = os.environ.get('MAX_TIME', 3600)
-EVALUATION_MAX_INTERACTIONS = os.environ.get('MAX_INTERACTIONS', 10)
+EVALUATION_MAX_TIME = 3600
+EVALUATION_MAX_INTERACTIONS = 10
