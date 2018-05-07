@@ -11,12 +11,12 @@ def registration(request):
         if form.is_valid():
             participant = form.save(commit=False)
             participant.generate_key()
-            participant.save()
             message = render_to_string('registration_email.html',
                                        {'participant': participant})
 
             participant.email_participant('DAVIS Challenge Registration',
                                           message)
+            participant.save()
 
             return render(request, 'success.html', {'participant': participant})
     else:

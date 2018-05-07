@@ -3,8 +3,6 @@
 function manage_app() {
 	python3 manage.py makemigrations
 	python3 manage.py migrate
-	mkdir static
-	python3 manage.py collectstatic --no-input
 }
 
 function start_development() {
