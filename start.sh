@@ -13,10 +13,15 @@ function start_default() {
 
 function start_gunicorn() {
 	NUM_WORKERS="${NUM_WORKERS:-4}"
-	PORT=${PORT:8000}
+	PORT=${PORT:-8000}
 	# use gunicorn for production server here
 	manage_app
-	gunicorn server.wsgi -w "$NUM_WORKERS" -b 0.0.0.0:"$PORT" --chdir=/app --log-file -
+	gunicorn server.wsgi \
+		-w "$NUM_WORKERS" \
+		-b 0.0.0.0:"$PORT" \
+		--log-level INFO \
+		--chdir=/app \
+		--log-file -
 }
 
 if [ ! -z "$GUNICORN" ]; then

@@ -3,15 +3,15 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y git gcc
 
-ADD ./code/requirements.txt /app/requirements.txt
+ADD ./requirements.txt /app/requirements.txt
 WORKDIR /app
 
 RUN pip install -U --no-cache-dir pip setuptools && \
     pip install --no-cache-dir numpy cython && \
     pip install --no-cache-dir -r requirements.txt
 
-ADD ./code /app
-ADD scripts/start.sh /start.sh
+ADD . /app
+ADD ./start.sh /start.sh
 
 EXPOSE 8000
 CMD ["/bin/bash", "/start.sh"]

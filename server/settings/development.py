@@ -10,7 +10,7 @@ DEBUG = True
 
 # Evaluation Settings
 EVALUATION_SUBSET = os.environ.get('SUBSET', 'test-dev')
-EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT', '/media/DAVIS')
+EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT', '/data/DAVIS')
 EVALUATION_MAX_TIME = int(os.environ.get('MAX_TIME', 3600))
 EVALUATION_MAX_INTERACTIONS = int(os.environ.get('MAX_INTERACTIONS', 10))
 assert EVALUATION_MAX_INTERACTIONS is not None
