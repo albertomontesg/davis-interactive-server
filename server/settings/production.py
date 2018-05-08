@@ -20,6 +20,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
+# New Email configurations
+EMAIL_SILENT = False
+EMAIL_SECRETS_DIR = os.path.join(BASE_DIR, '.credentials')
+EMAIL_CLIENT_SECRET_FILE = 'client_secret.json'
+EMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.send'
+EMAIL_APPLICATION_NAME = 'Gmail API Python Send Email'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

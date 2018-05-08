@@ -10,6 +10,8 @@ from django.utils import timezone
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 
+from .email import send_message
+
 
 class Participant(models.Model):
     user_id = models.CharField(
@@ -28,11 +30,7 @@ class Participant(models.Model):
         return self
 
     def email_participant(self, subject, message):
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_FROM, [self.email],
-            fail_silently=False)
+        send_message(settings.EMAIL_FROM, self.email, subject, message)
 
 
 class RegistrationForm(ModelForm):

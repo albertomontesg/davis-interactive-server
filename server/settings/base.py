@@ -77,10 +77,10 @@ DATABASES = {
 }
 
 # Email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST_USER = 'davisvideochallenge@gmail.com'
 EMAIL_FROM_NAME = 'DAVIS Challenge'
 EMAIL_FROM = f'{EMAIL_FROM_NAME} <{EMAIL_HOST_USER}>'
+EMAIL_SILENT = True
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators

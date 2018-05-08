@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.views.generic.edit import FormView
 
+from .email import send_message
 from .models import RegistrationForm
 
 

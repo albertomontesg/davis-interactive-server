@@ -1,7 +1,7 @@
 GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
 
 APP_NAME:="davis-interactive"
-VERSION:=0.0.1
+VERSION:=0.0.2
 
 .PHONY: build push run bash
 
@@ -17,6 +17,7 @@ run: build
 		-e GUNICORN=1 \
 		-v $(shell pwd)/data/DAVIS:/data/DAVIS \
 		-v $(shell pwd)/db.sqlite3:/app/db.sqlite3 \
+		-v $(shell pwd)/.credentials:/app/.credentials \
 		-p 8000:8000 \
 		gcr.io/$(GCLOUD_PROJECT)/$(APP_NAME):$(VERSION)
 

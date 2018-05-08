@@ -114,3 +114,6 @@ static/
 
 # DAVIS dataset
 data/
+
+# Credentials
+.credentials
