@@ -5,23 +5,24 @@ function manage_app() {
 	python3 manage.py migrate
 }
 
-function start_development() {
+function start_default() {
 	# use django runserver as development server here.
 	manage_app
 	python3 manage.py runserver 0.0.0.0:8000
 }
 
-function start_production() {
+function start_gunicorn() {
+	NUM_WORKERS="${NUM_WORKERS:-4}"
+	PORT=${PORT:8000}
 	# use gunicorn for production server here
 	manage_app
-	export DJANGO_SETTINGS_MODULE=server.settings.production
-	gunicorn server.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app --log-file -
+	gunicorn server.wsgi -w "$NUM_WORKERS" -b 0.0.0.0:"$PORT" --chdir=/app --log-file -
 }
 
-if [ ${PRODUCTION} == "true" ]; then
+if [ ! -z "$GUNICORN" ]; then
 	# use production server
-	start_production
+	start_gunicorn
 else
 	# use development server
-	start_development
+	start_default
 fi
