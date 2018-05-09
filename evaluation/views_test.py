@@ -1,10 +1,10 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from davisinteractive.dataset import Davis
-from davisinteractive.evaluation import EvaluationService
 from django.test import TestCase
 
+from davisinteractive.dataset import Davis
+from davisinteractive.evaluation import EvaluationService
 from evaluation.models import ResultEntry, Session
 from registration.models import Participant
 
@@ -14,11 +14,10 @@ class HealthViewTestCase(TestCase):
     def test_health(self):
         response = self.client.get('/api/healthcheck')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {
-            'health': 'OK',
-            'name': 'DAVIS Interactive Server',
-            'magic': 23
-        })
+        r_json = response.json()
+        self.assertEqual(r_json.get('health'), 'OK')
+        self.assertEqual(r_json.get('name'), 'DAVIS Interactive Server')
+        self.assertEqual(r_json.get('magic'), 23)
 
 
 class GetDatasetDataTestCase(TestCase):

@@ -42,6 +42,7 @@ class Session(models.Model):
 
 class ResultEntry(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
+    timestamp = models.DateTimeField(default=timezone.now)
     # Entry params
     sequence = models.CharField(max_length=128, blank=False)
     scribble_idx = models.IntegerField()
