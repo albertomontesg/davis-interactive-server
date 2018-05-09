@@ -3,7 +3,7 @@ GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)
 APP_NAME:="davis-interactive"
 VERSION:=0.0.4
 
-.PHONY: build push run bash
+.PHONY: build push run bash collectstatic
 
 build:
 	docker build -t gcr.io/$(GCLOUD_PROJECT)/$(APP_NAME):$(VERSION) .
@@ -24,3 +24,7 @@ run: build
 bash: build
 	docker run -it \
 		gcr.io/$(GCLOUD_PROJECT)/$(APP_NAME):$(VERSION) /bin/bash
+
+collectstatic:
+	./manage.py collectstatic --noinput
+	gsutil rsync -R static/ gs://davis-interactive-static/static
