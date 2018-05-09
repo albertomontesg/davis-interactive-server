@@ -150,5 +150,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Max upload size set to 256 MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 256 * 1024 * 1024
+# Max upload size set to 512 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 512 * 1024 * 1024

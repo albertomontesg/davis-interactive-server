@@ -1,8 +1,10 @@
 """ Server views for evaluation.
 """
-from davisinteractive.third_party import mask_api
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
+
+from davisinteractive.third_party import mask_api
 
 from .decorators import authorize, json_api, require_service
 
@@ -12,7 +14,16 @@ from .decorators import authorize, json_api, require_service
 def get_health(_):
     """ Return Healt status.
     """
-    return {'health': 'OK', 'name': 'DAVIS Interactive Server', 'magic': 23}
+    return {
+        'health': 'OK',
+        'name': 'DAVIS Interactive Server',
+        'magic': 23,
+        'evaluation_parameters': {
+            'subset': settings.EVALUATION_SUBSET,
+            'max_time': settings.EVALUATION_MAX_TIME,
+            'max_interactions': settings.EVALUATION_MAX_INTERACTIONS
+        }
+    }
 
 
 @json_api
