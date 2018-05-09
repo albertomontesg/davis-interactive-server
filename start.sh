@@ -21,7 +21,8 @@ function start_gunicorn() {
 		-b 0.0.0.0:"$PORT" \
 		--log-level INFO \
 		--chdir=/app \
-		--log-file -
+		--log-file - \
+		--error-logfile -
 }
 
 if [ ! -z "$GUNICORN" ]; then

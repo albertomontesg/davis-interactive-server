@@ -104,6 +104,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logger
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': ('[%(asctime)s: %(levelname)-7s/%(processName)-'
+                       '12s/%(module)-12s] %(message)s')
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -122,3 +149,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Max upload size set to 256 MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 256 * 1024 * 1024

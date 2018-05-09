@@ -54,8 +54,12 @@ def authorize(func):
         if not user_key or not session_key or not participant:
             return JsonResponse(
                 {
-                    'error': 'Invalid user_key or session_key'
-                }, status=401)
+                    'error':
+                    'Invalid user_key or session_key',
+                    'message': (f'user_key: {user_key}\tsession_key: '
+                                f'{session_key} not valid.')
+                },
+                status=401)
 
         kwargs['user_key'] = user_key
         kwargs['session_key'] = session_key
