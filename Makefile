@@ -1,7 +1,7 @@
 GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
 
 APP_NAME:="davis-interactive"
-VERSION:=0.0.8
+VERSION:=0.0.9
 
 .PHONY: build push run bash collectstatic
 
