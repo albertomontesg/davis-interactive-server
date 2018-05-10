@@ -35,8 +35,9 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
+        'CONN_MAX_AGE': 120,
     }
 }
 
 ALLOWED_HOSTS = ['*']
-STATIC_URL = 'http://storage.googleapis.com/davis-interactive-static/static/'
+STATIC_URL = 'https://storage.googleapis.com/davis-interactive-static/static/'
