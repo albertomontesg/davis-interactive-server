@@ -1,7 +1,13 @@
+import logging
+
 import pandas as pd
+from django.utils import timezone
+
 from davisinteractive.storage import AbstractStorage
 
 from .models import ResultEntry, Session
+
+logger = logging.getLogger(__name__)
 
 
 class DBStorage(AbstractStorage):
@@ -46,6 +52,26 @@ class DBStorage(AbstractStorage):
             raise RuntimeError(('For {} and scribble {} does not exist a '
                                 'result for previous interaction {}').format(
                                     sequence, scribble_idx, interaction - 1))
+
+        # Log information about previous interaction timestamps and current
+        # to perform statistics and decide if the some storage of results
+        # may be ignored due to fraud
+        previous_entries = ResultEntry.objects.filter(session=session)
+        if previous_entries.count() > 0:
+            last = previous_entries.latest('timestamp')
+            prev_timestamp = last.timestamp
+            curr_timestamp = timezone.now()
+            timedelta = (curr_timestamp - prev_timestamp).total_seconds()
+            logger.info(
+                f'Entries timedelta: {timedelta:.3f}s and timing: {timing:.3f}s'
+            )
+            time_diference = timedelta - timing
+            logger.info(f'Time diference: {time_diference:.3f}s')
+            if interaction > 1 and last.sequence != sequence:
+                logger.warning(
+                    f'Previous entry (in time) do not match the previous '
+                    f'interaction for sequence {sequence}\n'
+                    f'Session ID: {session_id}')
 
         results = [
             ResultEntry(
