@@ -1,7 +1,11 @@
-from davisinteractive.evaluation import EvaluationService as _EvaluationService
 from django.conf import settings
 
+from davisinteractive import logging
+from davisinteractive.evaluation import EvaluationService as _EvaluationService
+
 from .storage import DBStorage
+
+logging.set_info_level(2)
 
 
 class EvaluationService(object):
