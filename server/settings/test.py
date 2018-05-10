@@ -13,3 +13,6 @@ EVALUATION_SUBSET = 'test-dev'
 EVALUATION_DAVIS_ROOT = os.path.join(tempfile.mkdtemp(), 'DAVIS')
 EVALUATION_MAX_TIME = 3600
 EVALUATION_MAX_INTERACTIONS = 10
+
+# Disable logging
+LOGGING = None

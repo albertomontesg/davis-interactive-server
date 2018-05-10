@@ -1,7 +1,11 @@
+import logging
+
 from django.db import models
 from django.utils import timezone
 
 from registration.models import Participant
+
+logger = logging.getLogger(__name__)
 
 
 class Session(models.Model):
@@ -35,7 +39,17 @@ class Session(models.Model):
         from .evaluation import EvaluationService
         service = EvaluationService()
         self.num_entries += nb_new_entries
-        if self.num_entries == service.num_entries:
+        # Completion is defined as there is at least one interaction for each
+        # sample
+        samples_in_session = ResultEntry.objects.filter(
+            session=self, interaction=1, object_id=1, frame=0).values(
+                'sequence', 'scribble_idx')
+        samples_in_session = [
+            (s['sequence'], s['scribble_idx']) for s in samples_in_session
+        ]
+        samples, _, _ = service.get_samples()
+        if not self.completed and set(samples) == set(samples_in_session):
+            logger.info(f'Session {self} completed')
             self.completed = True
         self.save()
 

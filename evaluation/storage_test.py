@@ -92,10 +92,14 @@ class DBStorageTestCase(TestCase):
 
             for scribble_idx in range(1, num_scribbles + 1):
 
-                for it in range(num_interactions):
+                last_sample = (seq == sequences[-1]) and \
+                              (scribble_idx == num_scribbles)
+
+                for i in range(num_interactions):
+                    it = i + 1
 
                     objects_idx = [
-                        x for x, _ in product(
+                        x + 1 for x, _ in product(
                             range(num_objects), range(num_frames))
                     ]
                     frames = [
@@ -116,6 +120,10 @@ class DBStorageTestCase(TestCase):
                         objects_idx=objects_idx,
                         frames=frames,
                         jaccard=jaccard)
+
+                    if it == 1 and last_sample:
+                        session = Session.objects.get(session_id='session1234')
+                        self.assertTrue(session.completed)
 
         session = Session.objects.get(session_id='session1234')
         assert session.completed
