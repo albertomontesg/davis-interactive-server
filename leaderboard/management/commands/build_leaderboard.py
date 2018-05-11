@@ -15,7 +15,7 @@ class Command(BaseCommand):  # pragme: no cover
         service = EvaluationService()
 
         for s in sessions:
-            report = service.get_report(session_id=s.session_id)
+            report = service.get_report(session_id=s.session_id).copy()
             summary = service.summarize_report(report)
             s.mark_completed(summary)
             s.save()
