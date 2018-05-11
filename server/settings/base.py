@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'registration.apps.RegistrationConfig',
     'evaluation.apps.EvaluationConfig',
+    'leaderboard.apps.LeaderboardConfig',
     'widget_tweaks',
     'django_countries',
 ]

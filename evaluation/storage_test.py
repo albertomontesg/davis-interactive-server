@@ -1,5 +1,6 @@
 import random
 from itertools import product
+from unittest import skip
 
 from django.conf import settings
 from django.test import TestCase
@@ -92,9 +93,6 @@ class DBStorageTestCase(TestCase):
 
             for scribble_idx in range(1, num_scribbles + 1):
 
-                last_sample = (seq == sequences[-1]) and \
-                              (scribble_idx == num_scribbles)
-
                 for i in range(num_interactions):
                     it = i + 1
 
@@ -121,9 +119,15 @@ class DBStorageTestCase(TestCase):
                         frames=frames,
                         jaccard=jaccard)
 
-                    if it == 1 and last_sample:
-                        session = Session.objects.get(session_id='session1234')
-                        self.assertTrue(session.completed)
-
+        headers = {
+            'HTTP_USER_KEY': self.participant.user_id,
+            'HTTP_SESSION_KEY': 'session1234'
+        }
+        r = self.client.post(
+            '/api/evaluation/finish',
+            data={},
+            content_type='application/json',
+            **headers)
+        self.assertEqual(r.status_code, 200)
         session = Session.objects.get(session_id='session1234')
-        assert session.completed
+        self.assertTrue(session.completed)

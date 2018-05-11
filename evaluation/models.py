@@ -3,6 +3,7 @@ import logging
 from django.db import models
 from django.utils import timezone
 
+from leaderboard.models import LeaderboardCurve
 from registration.models import Participant
 
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ class Session(models.Model):
     # Parameters to evaluate
     auc = models.FloatField(null=True, blank=True)
     time_threshold = models.FloatField(null=True, blank=True)
-    jaccard_at_threshold = models.FloatField(null=True, blanck=True)
+    jaccard_at_threshold = models.FloatField(null=True, blank=True)
 
     @staticmethod
     def get_or_create_session(user_id, session_id):
@@ -71,10 +72,3 @@ class ResultEntry(models.Model):
     frame = models.IntegerField()
     jaccard = models.FloatField()
     timing = models.FloatField()
-
-
-class LeaderboardCurve(models.Model):
-    session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
-    # Parameters to evaluate
-    time = models.FloatField()
-    jaccard = models.FloatField()

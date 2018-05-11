@@ -23,6 +23,7 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='registration:index')),
     path('registration/', include('registration.urls')),
     path('api/', include('evaluation.urls')),
+    path('leaderboard/', include('leaderboard.urls')),
     path('admin/', admin.site.urls),
 ] + static(
     settings.STATIC_URL, document_root=settings.STATIC_ROOT)

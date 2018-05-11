@@ -94,7 +94,7 @@ def post_finish(_, service, session_key, user_key=None):
     """
     session = Session.objects.get(session_id=session_key)
     report = service.get_report(session_id=session_key)
-    summary = service.get_global_summary(report)
+    summary = service.summarize_report(report)
 
     session.mark_completed(summary)
     session.save()

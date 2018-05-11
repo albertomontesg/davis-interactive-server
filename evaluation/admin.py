@@ -6,11 +6,14 @@ from .models import ResultEntry, Session
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    fields = ('session_id', 'participant', 'start_timestamp', 'completed')
+    fields = ('session_id', 'participant', 'start_timestamp', 'completed',
+              'auc', 'time_threshold', 'jaccard_at_threshold')
     list_display = ('participant', 'hash_session_id', 'start_timestamp',
-                    'completed', 'completed_percentage')
+                    'completed', 'completed_percentage', 'auc',
+                    'jaccard_at_threshold')
     list_filter = ('participant', 'start_timestamp', 'completed')
-    readonly_fields = ('session_id', 'participant', 'start_timestamp')
+    readonly_fields = ('session_id', 'participant', 'start_timestamp', 'auc',
+                       'time_threshold', 'jaccard_at_threshold')
     actions = []
 
     def hash_session_id(self, obj):  # pragma: no cover
