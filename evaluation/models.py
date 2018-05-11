@@ -16,6 +16,11 @@ class Session(models.Model):
     completed = models.BooleanField(default=False)
     num_entries = models.IntegerField(default=0)
 
+    # Parameters to evaluate
+    auc = models.FloatField(null=True, blank=True)
+    time_threshold = models.FloatField(null=True, blank=True)
+    jaccard_at_threshold = models.FloatField(null=True, blanck=True)
+
     @staticmethod
     def get_or_create_session(user_id, session_id):
         session = Session.objects.filter(session_id=session_id).first()
@@ -32,25 +37,26 @@ class Session(models.Model):
 
     def update_entries(self, nb_new_entries):
         """ Add the new number of entries to the session.
-
-        This will mark as completed the session when reached the total number
-        of entries of the EvaluationService.
         """
-        from .evaluation import EvaluationService
-        service = EvaluationService()
         self.num_entries += nb_new_entries
-        # Completion is defined as there is at least one interaction for each
-        # sample
-        samples_in_session = ResultEntry.objects.filter(
-            session=self, interaction=1, object_id=1, frame=0).values(
-                'sequence', 'scribble_idx')
-        samples_in_session = [
-            (s['sequence'], s['scribble_idx']) for s in samples_in_session
+        self.save()
+
+    def mark_completed(self, summary):
+        """ Mark session completed computing the time vs jaccard curve and
+        storing it.
+        """
+        self.auc = summary['auc']
+        self.time_threshold = summary['jaccard_at_threshold']['threshold']
+        self.jaccard_at_threshold = summary['jaccard_at_threshold']['jaccard']
+
+        # Add curve to LeaderboardCurve
+        entries = [
+            LeaderboardCurve(session=self, time=t, jaccard=j) for t, j in zip(
+                summary['curve']['time'], summary['curve']['jaccard'])
         ]
-        samples, _, _ = service.get_samples()
-        if not self.completed and set(samples) == set(samples_in_session):
-            logger.info(f'Session {self} completed')
-            self.completed = True
+        LeaderboardCurve.objects.bulk_create(entries)
+
+        self.completed = True
         self.save()
 
 
@@ -65,3 +71,10 @@ class ResultEntry(models.Model):
     frame = models.IntegerField()
     jaccard = models.FloatField()
     timing = models.FloatField()
+
+
+class LeaderboardCurve(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
+    # Parameters to evaluate
+    time = models.FloatField()
+    jaccard = models.FloatField()

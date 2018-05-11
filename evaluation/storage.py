@@ -102,4 +102,5 @@ class DBStorage(AbstractStorage):
         query = ResultEntry.objects.filter(
             session__session_id=session_id).values(*DBStorage.COLUMNS)
         df = pd.DataFrame.from_records(query)
+        df = df.sort_index()
         return df

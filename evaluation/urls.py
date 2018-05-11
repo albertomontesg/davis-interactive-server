@@ -11,4 +11,6 @@ urlpatterns = [
         name='dataset_scribbles'),
     path('evaluation/interaction', views.post_predicted_masks, name='evaluate'),
     path('evaluation/report', views.get_report, name='report'),
+    path('evaluation/finish', views.post_finish, name='finish'),
+    path('evaluation/summary', views.get_global_summary, name='summary'),
 ]

@@ -7,6 +7,7 @@ from django.views.decorators.http import require_GET, require_POST
 from davisinteractive.third_party import mask_api
 
 from .decorators import authorize, json_api, require_service
+from .models import Session
 
 
 @json_api
@@ -68,7 +69,7 @@ def post_predicted_masks(request, service, user_key, session_key):
 @require_GET
 @require_service
 @authorize
-def get_report(request, service, session_key, user_key=None):
+def get_report(_, service, session_key, user_key=None):
     """ Return the report for a single session.
     """
     df = service.get_report(session_id=session_key).copy()
@@ -79,3 +80,22 @@ def get_report(request, service, session_key, user_key=None):
         df = df.drop(columns='frame')
         df = df.reset_index()
     return df.to_dict()
+
+
+@json_api
+@require_POST
+@require_service
+@authorize
+def post_finish(_, service, session_key, user_key=None):
+    """ Notify the session has finished.
+
+    Will mask the session as completed.
+    Returns the generated global summary.
+    """
+    session = Session.objects.get(session_id=session_key)
+    report = service.get_report(session_id=session_key)
+    summary = service.get_global_summary(report)
+
+    session.mark_completed(summary)
+    session.save()
+    return summary
