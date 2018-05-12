@@ -60,6 +60,31 @@ class Session(models.Model):
         self.completed = True
         self.save()
 
+    def get_summary(self, shorter_session_id=False):
+        """ Retrieve the global summary for each the session.
+        """
+        session_id = self.session_id
+        if shorter_session_id:
+            session_id = session_id[:8]
+        summary = {
+            'session_id': session_id,
+            'jaccard_at_threshold': {
+                'jaccard': self.jaccard_at_threshold,
+                'threshold': self.time_threshold
+            },
+            'curve': {
+                'time': [],
+                'jaccard': []
+            }
+        }
+        curve = LeaderboardCurve.objects.filter(
+            session=self).order_by('time').values('time', 'jaccard')
+        for c in curve:
+            summary['curve']['time'].append(c['time'])
+            summary['curve']['jaccard'].append(c['jaccard'])
+
+        return summary
+
 
 class ResultEntry(models.Model):
     session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
