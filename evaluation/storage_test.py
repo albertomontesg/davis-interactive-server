@@ -2,6 +2,7 @@ import random
 from itertools import product
 from unittest import skip
 
+import numpy as np
 from django.conf import settings
 from django.test import TestCase
 
@@ -131,3 +132,63 @@ class DBStorageTestCase(TestCase):
         self.assertEqual(r.status_code, 200)
         session = Session.objects.get(session_id='session1234')
         self.assertTrue(session.completed)
+
+    def test_annotated_frames(self):
+        sequence = 'bmx-trees'
+        nb_frames = 80
+
+        session = Session.get_or_create_session(self.participant.user_id,
+                                                'session1234')
+
+        jaccard = np.linspace(0., 1., nb_frames)
+
+        storage = DBStorage
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 0)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 2, jaccard)
+        self.assertEqual(next_frame, 0)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 1)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 2)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 2, jaccard)
+        self.assertEqual(next_frame, 1)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session.session_id, sequence, 3, jaccard)
+        self.assertEqual(next_frame, 0)
+
+        session2 = Session.get_or_create_session(self.participant.user_id,
+                                                 'session12345')
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 0)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 2, jaccard)
+        self.assertEqual(next_frame, 0)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 1)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 1, jaccard)
+        self.assertEqual(next_frame, 2)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 2, jaccard)
+        self.assertEqual(next_frame, 1)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id, sequence, 3, jaccard)
+        self.assertEqual(next_frame, 0)

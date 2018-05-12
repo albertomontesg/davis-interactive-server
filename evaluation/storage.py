@@ -1,11 +1,13 @@
 import logging
 
+import numpy as np
 import pandas as pd
 from django.utils import timezone
 
+from davisinteractive.dataset import Davis
 from davisinteractive.storage import AbstractStorage
 
-from .models import ResultEntry, Session
+from .models import AnnotatedFrame, ResultEntry, Session
 
 logger = logging.getLogger(__name__)
 
@@ -104,3 +106,52 @@ class DBStorage(AbstractStorage):
         df = pd.DataFrame.from_records(query)
         df = df.sort_index()
         return df
+
+    @staticmethod
+    def get_and_store_frame_to_annotate(session_id, sequence, scribble_idx,
+                                        jaccard):
+        """ Get and store the frame to generate the scribble.
+
+        This function will check all the previous generated scribbles frames
+        and return the frame with lower jaccard that the robot hasn't generated
+        a scribble.
+
+        # Arguments
+            session_id: String. Session ID identifier.
+            sequence: String. Sequence name.
+            scribble_idx: Integer. Scribble index of the sample.
+            jaccard: Numpy Array. Array with computed jaccard values. Must
+                have the same length as the number of frames of the sequence.
+
+        # Returns
+            Integer. Index of the frame to generate the next scribble.
+        """
+        session = Session.objects.get(session_id=session_id)
+        prev_frames = AnnotatedFrame.objects.filter(
+            session=session, sequence=sequence,
+            scribble_idx=scribble_idx).values('frame')
+        prev_frames = [p['frame'] for p in prev_frames]
+
+        jaccard = np.asarray(jaccard, dtype=np.float).ravel()
+        nb_frames = Davis.dataset[sequence]['num_frames']
+        if jaccard.shape[0] != nb_frames:
+            raise ValueError(
+                ('jaccard shape does not match the number of frames in {}'
+                ).format(sequence))
+
+        jac_idx = jaccard.argsort()
+        i = 0
+        while i < nb_frames and jac_idx[i] in prev_frames:
+            i += 1
+
+        if i == nb_frames:  # All the frames have been annotated
+            return jaccard.argmin()
+
+        frame_to_annotate = jac_idx[i]
+        AnnotatedFrame.objects.create(
+            session=session,
+            sequence=sequence,
+            scribble_idx=scribble_idx,
+            frame=frame_to_annotate)
+
+        return frame_to_annotate

@@ -72,3 +72,10 @@ class ResultEntry(models.Model):
     frame = models.IntegerField()
     jaccard = models.FloatField()
     timing = models.FloatField()
+
+
+class AnnotatedFrame(models.Model):
+    session = models.ForeignKey(Session, on_delete=models.PROTECT, null=False)
+    sequence = models.CharField(max_length=128, blank=False)
+    scribble_idx = models.IntegerField()
+    frame = models.IntegerField()
