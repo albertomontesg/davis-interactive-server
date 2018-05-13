@@ -11,16 +11,10 @@ EVALUATION_SUBSET = os.environ.get('SUBSET')
 EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT')
 EVALUATION_MAX_TIME = int(os.environ.get('MAX_TIME'))
 EVALUATION_MAX_INTERACTIONS = int(os.environ.get('MAX_INTERACTIONS'))
+EVALUATION_TIME_THRESHOLD = int(os.environ.get('TIME_THRESHOLD'))
 assert EVALUATION_MAX_INTERACTIONS is not None
 
-# Email
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-
-# New Email configurations
+# Email configurations
 EMAIL_SILENT = False
 EMAIL_SECRETS_DIR = os.environ.get('EMAIL_SECRETS_DIR')
 EMAIL_CLIENT_SECRET_FILE = 'client_secret.json'

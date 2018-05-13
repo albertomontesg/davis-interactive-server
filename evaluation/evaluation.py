@@ -19,7 +19,8 @@ class EvaluationService(object):
                 storage=DBStorage,
                 davis_root=settings.EVALUATION_DAVIS_ROOT,
                 max_t=settings.EVALUATION_MAX_TIME,
-                max_i=settings.EVALUATION_MAX_INTERACTIONS)
+                max_i=settings.EVALUATION_MAX_INTERACTIONS,
+                time_threshold=settings.EVALUATION_TIME_THRESHOLD)
         return EvaluationService.instance
 
     def __getattr__(self, name):  # pragma: no cover
