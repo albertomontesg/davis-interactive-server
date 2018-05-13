@@ -1,4 +1,5 @@
 import json
+import logging
 import traceback
 from functools import wraps
 
@@ -7,6 +8,8 @@ from django.http import HttpResponse, JsonResponse
 from registration.models import Participant
 
 from .evaluation import EvaluationService
+
+logger = logging.getLogger('views')
 
 
 def json_api(func):
@@ -24,7 +27,7 @@ def json_api(func):
                 return objects
             return JsonResponse(objects, safe=False)
         except Exception as e:
-            print(traceback.format_exc())
+            logger.error(traceback.format_exc())
             error_body = {
                 'error': e.__class__.__name__,
                 'message': list(e.args)
