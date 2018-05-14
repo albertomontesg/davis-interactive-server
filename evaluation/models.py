@@ -67,7 +67,9 @@ class Session(models.Model):
         if shorter_session_id:
             session_id = session_id[:8]
         summary = {
+            'participant': str(self.participant),
             'session_id': session_id,
+            'auc': self.auc,
             'jaccard_at_threshold': {
                 'jaccard': self.jaccard_at_threshold,
                 'threshold': self.time_threshold

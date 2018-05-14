@@ -1,0 +1,47 @@
+{% extends 'base_leaderboard.html' %}
+
+{% block table_by_auc %}
+<table id="tab" width="50%" style="margin: auto; border-spacing: 40px 10px; font-family: 'Raleway', sans-serif; margin-left: 25%;margin-right:25%;margin-bottom:40px;">
+  <tbody>
+    <tr>
+      <td class="seq_header" style="width: 40px; border-bottom: 1px solid gray; border-top: 1px solid gray; color:#efefef; background: #a1a1a1; text-align: center;">Position</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Participant</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Session ID</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">AUC</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J@60s</td>
+    </tr>
+    {% for r in by_auc %}
+    <tr>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.pos }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.participant }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.session_id }}</td>
+      <td class="highlight" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.auc | stringformat:".3f" }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.jaccard_at_threshold.jaccard | stringformat:".3f" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block table_by_jaccard_threshold %}
+<table id="tab" width="50%" style="border-spacing: 40px 10px; font-family: 'Raleway', sans-serif; margin-left: 25%;margin-right:25%;margin-bottom:40px;">
+  <tbody>
+    <tr>
+      <td class="seq_header" style="width: 40px; border-bottom: 1px solid gray; border-top: 1px solid gray; color:#efefef; background: #a1a1a1; text-align: center;">Position</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Participant</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Session ID</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">AUC</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J@60s</td>
+    </tr>
+    {% for r in by_jaccard_threshold %}
+    <tr>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.pos }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.participant }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.session_id }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.auc | stringformat:".3f" }}</td>
+      <td class="highlight" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.jaccard_at_threshold.jaccard | stringformat:".3f" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href='https://fonts.googleapis.com/css?family=Raleway:100,300' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="https://yui-s.yahooapis.com/pure/0.6.0/pure-min.css">
+		<link rel="stylesheet" href="{% static "css/style_tab.css" %}">
+		<link rel="stylesheet" href="{% static "css/side-menu.css" %}">
+    <title>{% block tabtitle %}{% endblock %}</title>
+
+  </head>
+
+  <body>
+		<div id="main">
+			<div class="header">
+				<h1>Leaderboard By AUC</h1>
+			</div>
+			<div class="pure-g">
+			<div class="pure-u-1-1">
+			{% block table_by_auc %}{% endblock %}
+			</div></div>
+
+			<div class="header">
+				<h1>Leaderboard By Jaccard@60s</h1>
+			</div>
+			<div class="pure-g">
+			<div class="pure-u-1-1">
+			{%block table_by_jaccard_threshold %}{% endblock %}
+			</div></div>
+		</div>
+  </body>
+</html>
