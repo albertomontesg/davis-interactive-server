@@ -14,6 +14,9 @@ def get_leaderboard(request):
 
     query = Session.objects.filter(completed=True).values(
         'participant__user_id', 'session_id', 'auc')
+    if len(query) == 0:
+        return render(request, 'leaderboard.html', leaderboard)
+
     df = pd.DataFrame.from_records(query).set_index('session_id')
     session_ids = df.groupby(
         'participant__user_id').idxmax().values.ravel().tolist()
