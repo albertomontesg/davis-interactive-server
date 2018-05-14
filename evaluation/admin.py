@@ -14,6 +14,7 @@ class SessionAdmin(admin.ModelAdmin):
     list_filter = ('participant', 'start_timestamp', 'completed')
     readonly_fields = ('session_id', 'participant', 'start_timestamp', 'auc',
                        'time_threshold', 'jaccard_at_threshold')
+    ordering = ['-start_timestamp']
     actions = []
 
     def hash_session_id(self, obj):  # pragma: no cover

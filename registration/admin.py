@@ -10,3 +10,4 @@ class ParticipantAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'name', 'organization', 'country', 'email',
                     'registration_datetime')
     list_filter = ('organization', 'country', 'registration_datetime')
+    ordering = ['-registration_datetime']
