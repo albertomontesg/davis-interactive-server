@@ -1,3 +1,4 @@
+import pandas as pd
 from django.db.models import Max, QuerySet
 from django.shortcuts import render
 from django.views.decorators.http import require_GET
@@ -11,28 +12,31 @@ from evaluation.models import Participant, Session
 def get_leaderboard(request):
     leaderboard = {'by_auc': [], 'by_jaccard_threshold': []}
 
-    participants = Participant.objects.annotate(max_auc=Max(
-        'session__auc')).exclude(max_auc__isnull=True).order_by('-max_auc')
-    for i, p in enumerate(participants):
+    query = Session.objects.filter(completed=True).values(
+        'participant__user_id', 'session_id', 'auc')
+    df = pd.DataFrame.from_records(query).set_index('session_id')
+    session_ids = df.groupby(
+        'participant__user_id').idxmax().values.ravel().tolist()
+    sessions = Session.objects.filter(
+        session_id__in=session_ids).order_by('-auc')
+    for i, s in enumerate(sessions):
         pos = i + 1
-        session = Session.objects.get(participant=p, auc=p.max_auc)
-        summary = session.get_summary(shorter_session_id=True)
+        summary = s.get_summary(shorter_session_id=True)
         summary['pos'] = pos
         leaderboard['by_auc'].append(summary)
 
-    participants = Participant.objects.annotate(
-        max_jac_th=Max('session__jaccard_at_threshold')).exclude(
-            max_jac_th__isnull=True).order_by('-max_jac_th')
-    for i, p in enumerate(participants):
+    query = Session.objects.filter(completed=True).values(
+        'participant__user_id', 'session_id', 'jaccard_at_threshold')
+    df = pd.DataFrame.from_records(query).set_index('session_id')
+    session_ids = df.groupby(
+        'participant__user_id').idxmax().values.ravel().tolist()
+    sessions = Session.objects.filter(
+        session_id__in=session_ids).order_by('-jaccard_at_threshold')
+    for i, s in enumerate(sessions):
         pos = i + 1
-        session = Session.objects.get(
-            participant=p, jaccard_at_threshold=p.max_jac_th)
-        summary = session.get_summary(shorter_session_id=True)
+        summary = s.get_summary(shorter_session_id=True)
         summary['pos'] = pos
         leaderboard['by_jaccard_threshold'].append(summary)
 
     return render(
-        request, 'leaderboard.html', {
-            'by_auc': leaderboard['by_auc'],
-            'by_jaccard_threshold': leaderboard['by_jaccard_threshold']
-        })
+        request, 'leaderboard.html', leaderboard)
