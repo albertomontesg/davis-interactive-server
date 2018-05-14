@@ -1,12 +1,45 @@
 import json
+import os
 from unittest.mock import MagicMock, patch
 
-from django.test import TestCase
+import numpy as np
+from django.conf import settings
+from django.test import Client, TestCase, override_settings
 
+from davisinteractive.connector.remote import RemoteConnector
 from davisinteractive.dataset import Davis
 from davisinteractive.evaluation import EvaluationService
+from davisinteractive.session import DavisInteractiveSession
+from davisinteractive.session.session_test import dataset
 from evaluation.models import ResultEntry, Session
+from evaluation.storage import DBStorage
 from registration.models import Participant
+
+
+def mock_requests(method):
+
+    def wrapper(*args, **kwargs):
+        client = Client()
+        headers = kwargs.get('headers')
+        if headers:
+            new_headers = {}
+            for k in headers:
+                n_k = 'HTTP_' + k.upper().replace('-', '_')
+                new_headers[n_k] = headers[k]
+            del kwargs['headers']
+            kwargs.update(new_headers)
+
+        if 'json' in kwargs:
+            kwargs['data'] = json.dumps(kwargs['json'])
+            kwargs['content_type'] = 'application/json'
+
+        if method == 'GET':
+            return client.get(*args, **kwargs)
+        elif method == 'POST':
+            return client.post(*args, **kwargs)
+        raise ValueError('Invalid method value {method}')
+
+    return wrapper
 
 
 class HealthViewTestCase(TestCase):
@@ -521,3 +554,61 @@ class ReportTestCase(TestCase):
                     '1': .35
                 }
             })
+
+
+class TestIntegrationCase(TestCase):
+
+    def setUp(self):
+        self.participant = Participant.objects.create(
+            user_id='1234',
+            name='John Doe',
+            organization='Company SA',
+            email='john@example')
+
+    @dataset(
+        'train',
+        bear={
+            'num_frames': 2,
+            'num_scribbles': 2
+        },
+        tennis={
+            'num_frames': 2,
+            'num_scribbles': 1
+        })
+    @patch('evaluation.decorators.EvaluationService')
+    @patch(
+        'davisinteractive.connector.remote.requests.post',
+        new=mock_requests('POST'))
+    @patch(
+        'davisinteractive.connector.remote.requests.get',
+        new=mock_requests('GET'))
+    def test_workflow(self, mock_service):
+        mock_service.return_value = EvaluationService(
+            'train',
+            storage=DBStorage,
+            davis_root=os.path.join(settings.BASE_DIR, 'evaluation',
+                                    'test_data', 'DAVIS'),
+            max_t=settings.EVALUATION_MAX_TIME,
+            max_i=settings.EVALUATION_MAX_INTERACTIONS,
+            time_threshold=settings.EVALUATION_TIME_THRESHOLD)
+        RemoteConnector.VALID_SUBSETS.append('train')
+
+        with DavisInteractiveSession(
+                host='/', user_key='1234', subset='train',
+                report_save_dir='/tmp') as session:
+            while session.next():
+                sequence, _, _ = session.get_scribbles()
+
+                nb_frames = Davis.dataset[sequence]['num_frames']
+                w, h = Davis.dataset[sequence]['image_size']
+
+                pred_masks = np.zeros((nb_frames, h, w), dtype=np.int)
+                pred_masks[:, 50:250, 150:350] = 1
+
+                session.submit_masks(pred_masks)
+
+                summary = session.get_global_summary()
+                self.assertEqual(summary, {})
+
+            summary = session.get_global_summary()
+            self.assertNotEqual(summary, {})
