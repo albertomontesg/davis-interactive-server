@@ -82,6 +82,7 @@ def get_report(_, service, session_key, user_key=None):
     return df.to_dict()
 
 
+@csrf_exempt
 @json_api
 @require_POST
 @require_service
