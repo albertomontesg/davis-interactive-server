@@ -65,10 +65,12 @@ class DBStorage(AbstractStorage):
             curr_timestamp = timezone.now()
             timedelta = (curr_timestamp - prev_timestamp).total_seconds()
             logger.info(
+                f'[Session: {session_id[:8]}] '
                 f'Entries timedelta: {timedelta:.3f}s and timing: {timing:.3f}s'
             )
             time_diference = timedelta - timing
-            logger.info(f'Time diference: {time_diference:.3f}s')
+            logger.info(f'[Session: {session_id[:8]}] '
+                        f'Time diference: {time_diference:.3f}s')
             if interaction > 1 and last.sequence != sequence:
                 logger.warning(
                     f'Previous entry (in time) do not match the previous '
