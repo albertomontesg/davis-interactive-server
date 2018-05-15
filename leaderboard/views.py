@@ -1,13 +1,14 @@
 import pandas as pd
 from django.db.models import Max, QuerySet
 from django.shortcuts import render
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_GET
 
 from evaluation.decorators import json_api
 from evaluation.models import Participant, Session
 
 
-# @json_api
+@xframe_options_exempt
 @require_GET
 def get_leaderboard(request):
     leaderboard = {'by_auc': [], 'by_jaccard_threshold': []}
@@ -41,5 +42,4 @@ def get_leaderboard(request):
         summary['pos'] = pos
         leaderboard['by_jaccard_threshold'].append(summary)
 
-    return render(
-        request, 'leaderboard.html', leaderboard)
+    return render(request, 'leaderboard.html', leaderboard)
