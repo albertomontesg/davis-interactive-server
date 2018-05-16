@@ -8,6 +8,8 @@ SECRET_KEY = 'd9ns*-47^jva++xnop-$+sn&p!!7g4h8-s!a3+7b0-j)c!as*h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+STATIC_URL = 'https://storage.googleapis.com/davis-interactive-static/static/'
+ALLOWED_HOSTS = ['*']
 # Evaluation Settings
 EVALUATION_SUBSET = os.environ.get('SUBSET', 'test-dev')
 EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT', 'data/DAVIS')

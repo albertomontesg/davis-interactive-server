@@ -9,6 +9,8 @@
 		<link rel="stylesheet" href="https://yui-s.yahooapis.com/pure/0.6.0/pure-min.css">
 		<link rel="stylesheet" href="{% static "css/style_tab.css" %}">
 		<link rel="stylesheet" href="{% static "css/side-menu.css" %}">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script> 
+    
     <title>{% block tabtitle %}{% endblock %}</title>
 
   </head>
@@ -31,5 +33,6 @@
 			{%block table_by_jaccard_threshold %}{% endblock %}
 			</div></div>
 		</div>
+    <script type="text/javascript" src="{% static "js/iframeResizer.contentWindow.js" %}"></script>
   </body>
 </html>

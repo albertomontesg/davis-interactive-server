@@ -42,4 +42,6 @@ def get_leaderboard(request):
         summary['pos'] = pos
         leaderboard['by_jaccard_threshold'].append(summary)
 
-    return render(request, 'leaderboard.html', leaderboard)
+    response = render(request, 'leaderboard.html', leaderboard)
+    response['Expose-Height-Cross-Origin'] = 1
+    return response
