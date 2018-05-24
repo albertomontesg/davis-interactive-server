@@ -1,7 +1,9 @@
 import pandas as pd
+from django.conf import settings
 from django.db.models import Max, QuerySet
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.http import require_GET
 
@@ -12,11 +14,13 @@ from evaluation.models import Participant, Session
 @xframe_options_exempt
 @require_GET
 def get_leaderboard(request):
-    print(request.content_type)
     leaderboard = {'by_auc': [], 'by_jaccard_threshold': []}
 
-    query = Session.objects.filter(completed=True).values(
-        'participant__user_id', 'session_id', 'auc')
+    deadline = settings.EVALUATION_DEADLINE
+
+    query = Session.objects.filter(
+        completed=True, start_timestamp__lte=deadline).values(
+            'participant__user_id', 'session_id', 'auc')
     if len(query) == 0 and request.content_type == 'application/json':
         return JsonResponse(leaderboard)
     elif len(query) == 0:
