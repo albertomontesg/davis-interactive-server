@@ -1,6 +1,9 @@
 """ Server views for evaluation.
 """
+import logging
+
 from django.conf import settings
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
@@ -9,12 +12,27 @@ from davisinteractive.third_party import mask_api
 from .decorators import authorize, json_api, require_service
 from .models import Session
 
+logger = logging.getLogger(__name__)
+
 
 @json_api
 @require_GET
 def get_health(_):
     """ Return Healt status.
     """
+    # Check the DB connection
+    try:
+        from django.db import connections
+        for name in connections:
+            cursor = connections[name].cursor()
+            cursor.execute("SELECT 1;")
+            row = cursor.fetchone()
+            if row is None:
+                return HttpResponse("db: invalid response", status=500)
+    except Exception as e:
+        logger.exception(e)
+        return HttpResponse('db: cannot connect to database.', status=500)
+
     return {
         'health': 'OK',
         'name': 'DAVIS Interactive Server',
