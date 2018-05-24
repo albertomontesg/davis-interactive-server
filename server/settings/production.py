@@ -1,4 +1,7 @@
 import os
+from datetime import datetime
+
+import pytz
 
 from server.settings.base import *  # pylint: disable=unused-wildcard-import, wildcard-import
 
@@ -12,6 +15,9 @@ EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT')
 EVALUATION_MAX_TIME = int(os.environ.get('MAX_TIME'))
 EVALUATION_MAX_INTERACTIONS = int(os.environ.get('MAX_INTERACTIONS'))
 EVALUATION_TIME_THRESHOLD = int(os.environ.get('TIME_THRESHOLD'))
+EVALUATION_DEADLINE = datetime.strptime(
+    os.environ.get('DEADLINE'), '%d %b %Y %H:%M')
+EVALUATION_DEADLINE = pytz.utc.localize(EVALUATION_DEADLINE)
 assert EVALUATION_MAX_INTERACTIONS is not None
 
 # Email configurations
