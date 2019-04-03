@@ -2,10 +2,9 @@ import logging
 
 import numpy as np
 import pandas as pd
-from django.utils import timezone
-
 from davisinteractive.dataset import Davis
 from davisinteractive.storage import AbstractStorage
+from django.utils import timezone
 
 from .models import AnnotatedFrame, ResultEntry, Session
 
@@ -110,8 +109,11 @@ class DBStorage(AbstractStorage):
         return df
 
     @staticmethod
-    def get_and_store_frame_to_annotate(session_id, sequence, scribble_idx,
-                                        jaccard):
+    def get_and_store_frame_to_annotate(session_id,
+                                        sequence,
+                                        scribble_idx,
+                                        jaccard,
+                                        override_frame_to_annotate=None):
         """ Get and store the frame to generate the scribble.
 
         This function will check all the previous generated scribbles frames
@@ -124,6 +126,8 @@ class DBStorage(AbstractStorage):
             scribble_idx: Integer. Scribble index of the sample.
             jaccard: Numpy Array. Array with computed jaccard values. Must
                 have the same length as the number of frames of the sequence.
+            override_frame_to_annotate: Optional Integer. Frame to annotate next
+                scribble.
 
         # Returns
             Integer. Index of the frame to generate the next scribble.
@@ -146,14 +150,23 @@ class DBStorage(AbstractStorage):
         while i < nb_frames and jac_idx[i] in prev_frames:
             i += 1
 
-        if i == nb_frames:  # All the frames have been annotated
-            return jaccard.argmin()
+        # Logic to get the next annotated frame
+        override = False
+        if override_frame_to_annotate is not None and (
+                override_frame_to_annotate >= 0 and
+                override_frame_to_annotate < nb_frames):
+            frame_to_annotate = override_frame_to_annotate
+            override = True
+        elif i == nb_frames:
+            frame_to_annotate = jaccard.argmin()
+        else:
+            frame_to_annotate = jac_idx[i]
 
-        frame_to_annotate = jac_idx[i]
         AnnotatedFrame.objects.create(
             session=session,
             sequence=sequence,
             scribble_idx=scribble_idx,
-            frame=frame_to_annotate)
+            frame=frame_to_annotate,
+            override=override)
 
         return frame_to_annotate

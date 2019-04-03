@@ -1,12 +1,11 @@
 import random
 from itertools import product
-from unittest import skip
 
 import numpy as np
+from davisinteractive.dataset import Davis
 from django.conf import settings
 from django.test import TestCase
 
-from davisinteractive.dataset import Davis
 from evaluation.models import ResultEntry, Session
 from evaluation.storage import DBStorage
 from registration.models import Participant
@@ -38,8 +37,7 @@ class DBStorageTestCase(TestCase):
             Session.objects.filter(session_id='session1234').count(), 1)
         self.assertEqual(
             ResultEntry.objects.filter(
-                session__session_id='session1234').count(),
-            4)
+                session__session_id='session1234').count(), 4)
 
         with self.assertRaises(RuntimeError):
             DBStorage.store_interactions_results(
@@ -71,8 +69,7 @@ class DBStorageTestCase(TestCase):
             Session.objects.filter(session_id='session1234').count(), 1)
         self.assertEqual(
             ResultEntry.objects.filter(
-                session__session_id='session1234').count(),
-            0)
+                session__session_id='session1234').count(), 0)
 
     def test_complete_session(self):
         self.assertEqual(
@@ -192,3 +189,27 @@ class DBStorageTestCase(TestCase):
         next_frame = storage.get_and_store_frame_to_annotate(
             session2.session_id, sequence, 3, jaccard)
         self.assertEqual(next_frame, 0)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id,
+            sequence,
+            1,
+            jaccard,
+            override_frame_to_annotate=30)
+        self.assertEqual(next_frame, 30)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id,
+            sequence,
+            1,
+            jaccard,
+            override_frame_to_annotate=1)
+        self.assertEqual(next_frame, 1)
+
+        next_frame = storage.get_and_store_frame_to_annotate(
+            session2.session_id,
+            sequence,
+            1,
+            jaccard,
+            override_frame_to_annotate=100)
+        self.assertEqual(next_frame, 3)

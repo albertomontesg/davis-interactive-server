@@ -106,3 +106,4 @@ class AnnotatedFrame(models.Model):
     sequence = models.CharField(max_length=128, blank=False)
     scribble_idx = models.IntegerField()
     frame = models.IntegerField()
+    override = models.BooleanField(default=False)
