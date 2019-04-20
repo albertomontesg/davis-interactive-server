@@ -18,7 +18,7 @@ class DBStorage(AbstractStorage):
     @staticmethod
     def store_interactions_results(user_id, session_id, sequence, scribble_idx,
                                    interaction, timing, objects_idx, frames,
-                                   jaccard):
+                                   jaccard, contour):
         """ The information of a single interaction is given and stored.
 
         # Arguments
@@ -34,6 +34,7 @@ class DBStorage(AbstractStorage):
             frames: List of Integers: List of frame index matching with the
                 jaccard metric.
             jaccard: List of Floats: List of jaccard metric.
+            contour: List of Floats: List of contour metric.
         """
         session = Session.get_or_create_session(user_id, session_id)
 
@@ -76,6 +77,8 @@ class DBStorage(AbstractStorage):
                     f'interaction for sequence {sequence}\n'
                     f'Session ID: {session_id}')
 
+        j_and_f = [.5 * j + .5 * f for j, f in zip(jaccard, contour)]
+
         results = [
             ResultEntry(
                 session=session,
@@ -86,7 +89,9 @@ class DBStorage(AbstractStorage):
                 object_id=o_id,
                 frame=f,
                 jaccard=j,
-            ) for o_id, f, j in zip(objects_idx, frames, jaccard)
+                contour=c,
+                j_and_f=j_c) for o_id, f, j, c, j_c in zip(
+                    objects_idx, frames, jaccard, contour, j_and_f)
         ]
         ResultEntry.objects.bulk_create(results)
         num_new_entries = len(results)
@@ -109,64 +114,51 @@ class DBStorage(AbstractStorage):
         return df
 
     @staticmethod
-    def get_and_store_frame_to_annotate(session_id,
-                                        sequence,
-                                        scribble_idx,
-                                        jaccard,
-                                        override_frame_to_annotate=None):
-        """ Get and store the frame to generate the scribble.
-
-        This function will check all the previous generated scribbles frames
-        and return the frame with lower jaccard that the robot hasn't generated
-        a scribble.
+    def get_annotated_frames(session_id, sequence, scribble_idx):
+        """Get the previous annotated frames for the given iteration.
 
         # Arguments
-            session_id: String. Session ID identifier.
+            session_id: String. Ignored.
             sequence: String. Sequence name.
             scribble_idx: Integer. Scribble index of the sample.
-            jaccard: Numpy Array. Array with computed jaccard values. Must
-                have the same length as the number of frames of the sequence.
-            override_frame_to_annotate: Optional Integer. Frame to annotate next
-                scribble.
 
         # Returns
-            Integer. Index of the frame to generate the next scribble.
+            List of Integers. List of the frames that have been previously
+                annotated in the current iteration.
         """
         session = Session.objects.get(session_id=session_id)
         prev_frames = AnnotatedFrame.objects.filter(
             session=session, sequence=sequence,
             scribble_idx=scribble_idx).values('frame')
-        prev_frames = [p['frame'] for p in prev_frames]
+        prev_frames = [f['frame'] for f in prev_frames]
 
-        jaccard = np.asarray(jaccard, dtype=np.float).ravel()
-        nb_frames = Davis.dataset[sequence]['num_frames']
-        if jaccard.shape[0] != nb_frames:
-            raise ValueError(
-                ('jaccard shape does not match the number of frames in {}'
-                ).format(sequence))
+        if len(prev_frames) == Davis.dataset[sequence]['num_frames']:
+            return tuple()
 
-        jac_idx = jaccard.argsort()
-        i = 0
-        while i < nb_frames and jac_idx[i] in prev_frames:
-            i += 1
+        return tuple(prev_frames)
 
-        # Logic to get the next annotated frame
-        override = False
-        if override_frame_to_annotate is not None and (
-                override_frame_to_annotate >= 0 and
-                override_frame_to_annotate < nb_frames):
-            frame_to_annotate = override_frame_to_annotate
-            override = True
-        elif i == nb_frames:
-            frame_to_annotate = jaccard.argmin()
-        else:
-            frame_to_annotate = jac_idx[i]
+    @staticmethod
+    def store_annotated_frame(session_id, sequence, scribble_idx,
+                              annotated_frame, override):
+        """ Get and store the frame to generate the scribble.
 
+        This function will check all the previous generated scribbles frames
+        and return the frame with lower metric that the robot hasn't generated
+        a scribble.
+
+        # Arguments
+            session_id: String. Ignored.
+            sequence: String. Sequence name.
+            scribble_idx: Integer. Scribble index of the sample.
+            annotated_frame: Integer. Index of the frame of the next scribble
+                iteration.
+            override: Boolean. Whether or not the annotated frame was override
+                by the user or not.
+        """
+        session = Session.objects.get(session_id=session_id)
         AnnotatedFrame.objects.create(
             session=session,
             sequence=sequence,
             scribble_idx=scribble_idx,
-            frame=frame_to_annotate,
+            frame=annotated_frame,
             override=override)
-
-        return frame_to_annotate

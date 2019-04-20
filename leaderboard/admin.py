@@ -6,6 +6,6 @@ from .models import LeaderboardCurve
 # Register your models here.
 @admin.register(LeaderboardCurve)
 class LeaderboardCurveAdmin(admin.ModelAdmin):
-    fields = ('session', 'time', 'jaccard')
-    list_display = ('session', 'time', 'jaccard')
-    readonly_fields = ('session', 'time', 'jaccard')
+    fields = ('session', 'time', 'metric')
+    list_display = ('session', 'time', 'metric')
+    readonly_fields = ('session', 'time', 'metric')

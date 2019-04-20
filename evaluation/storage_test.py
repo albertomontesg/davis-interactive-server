@@ -32,7 +32,8 @@ class DBStorageTestCase(TestCase):
             timing=2.,
             objects_idx=[1, 2, 1, 2],
             frames=[1, 1, 2, 2],
-            jaccard=[.1, .2, .3, .4])
+            jaccard=[.1, .2, .3, .4],
+            contour=[.1, .2, .3, .4])
         self.assertEqual(
             Session.objects.filter(session_id='session1234').count(), 1)
         self.assertEqual(
@@ -49,7 +50,8 @@ class DBStorageTestCase(TestCase):
                 timing=2.,
                 objects_idx=[1, 2, 1, 2],
                 frames=[1, 1, 2, 2],
-                jaccard=[.1, .2, .3, .4])
+                jaccard=[.1, .2, .3, .4],
+                contour=[.1, .2, .3, .4])
 
     def test_no_previous(self):
         self.assertEqual(
@@ -64,7 +66,8 @@ class DBStorageTestCase(TestCase):
                 timing=2.,
                 objects_idx=[1, 2, 1, 2],
                 frames=[1, 1, 2, 2],
-                jaccard=[.1, .2, .3, .4])
+                jaccard=[.1, .2, .3, .4],
+                contour=[.1, .2, .3, .4])
         self.assertEqual(
             Session.objects.filter(session_id='session1234').count(), 1)
         self.assertEqual(
@@ -102,7 +105,7 @@ class DBStorageTestCase(TestCase):
                         x for _, x in product(
                             range(num_objects), range(num_frames))
                     ]
-                    jaccard = [
+                    metric = [
                         random.random() for _ in range(num_frames * num_objects)
                     ]
 
@@ -115,7 +118,8 @@ class DBStorageTestCase(TestCase):
                         timing=1.,
                         objects_idx=objects_idx,
                         frames=frames,
-                        jaccard=jaccard)
+                        jaccard=metric,
+                        contour=metric)
 
         headers = {
             'HTTP_USER_KEY': self.participant.user_id,
@@ -132,84 +136,30 @@ class DBStorageTestCase(TestCase):
 
     def test_annotated_frames(self):
         sequence = 'bmx-trees'
+        scribble_idx = 1
+
+        session = Session.get_or_create_session(self.participant.user_id,
+                                                'session1234')
+
+        storage = DBStorage
+        storage.store_annotated_frame(session.session_id, sequence,
+                                      scribble_idx, 1, False)
+        annotated_frames = storage.get_annotated_frames(session.session_id,
+                                                        sequence, scribble_idx)
+        self.assertEqual(annotated_frames, (1,))
+
+    def test_annotated_frames_full(self):
+        sequence = 'bmx-trees'
+        scribble_idx = 1
         nb_frames = 80
 
         session = Session.get_or_create_session(self.participant.user_id,
                                                 'session1234')
 
-        jaccard = np.linspace(0., 1., nb_frames)
-
         storage = DBStorage
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 2, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 1)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 2)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 2, jaccard)
-        self.assertEqual(next_frame, 1)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session.session_id, sequence, 3, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        session2 = Session.get_or_create_session(self.participant.user_id,
-                                                 'session12345')
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 2, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 1)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 1, jaccard)
-        self.assertEqual(next_frame, 2)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 2, jaccard)
-        self.assertEqual(next_frame, 1)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id, sequence, 3, jaccard)
-        self.assertEqual(next_frame, 0)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id,
-            sequence,
-            1,
-            jaccard,
-            override_frame_to_annotate=30)
-        self.assertEqual(next_frame, 30)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id,
-            sequence,
-            1,
-            jaccard,
-            override_frame_to_annotate=1)
-        self.assertEqual(next_frame, 1)
-
-        next_frame = storage.get_and_store_frame_to_annotate(
-            session2.session_id,
-            sequence,
-            1,
-            jaccard,
-            override_frame_to_annotate=100)
-        self.assertEqual(next_frame, 3)
+        for i in range(nb_frames):
+            storage.store_annotated_frame(session.session_id, sequence,
+                                          scribble_idx, i, False)
+        annotated_frames = storage.get_annotated_frames(session.session_id,
+                                                        sequence, scribble_idx)
+        self.assertEqual(annotated_frames, tuple())

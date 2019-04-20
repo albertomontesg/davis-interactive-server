@@ -4,5 +4,5 @@ psycopg2-binary==2.7.4
 django_widget_tweaks==1.4.2
 django_countries==5.3
 google-api-python-client==1.6.7
-davisinteractive==0.1.9
+davisinteractive==1.0.0
 pytz==2018.4

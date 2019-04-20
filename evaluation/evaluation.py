@@ -1,7 +1,6 @@
-from django.conf import settings
-
 from davisinteractive import logging
 from davisinteractive.evaluation import EvaluationService as _EvaluationService
+from django.conf import settings
 
 from .storage import DBStorage
 
@@ -20,6 +19,7 @@ class EvaluationService(object):
                 davis_root=settings.EVALUATION_DAVIS_ROOT,
                 max_t=settings.EVALUATION_MAX_TIME,
                 max_i=settings.EVALUATION_MAX_INTERACTIONS,
+                metric_to_optimize=settings.EVALUATION_METRIC_TO_OPTIMIZE,
                 time_threshold=settings.EVALUATION_TIME_THRESHOLD)
         return EvaluationService.instance
 

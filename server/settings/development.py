@@ -17,6 +17,7 @@ EVALUATION_DAVIS_ROOT = os.environ.get('DAVIS_ROOT', 'data/DAVIS')
 EVALUATION_MAX_TIME = int(os.environ.get('MAX_TIME', 240))
 EVALUATION_MAX_INTERACTIONS = int(os.environ.get('MAX_INTERACTIONS', 8))
 EVALUATION_TIME_THRESHOLD = int(os.environ.get('TIME_THRESHOLD', 60))
+EVALUATION_METRIC_TO_OPTIMIZE = os.environ.get('METRIC_TO_OPTIMIZE', 'J_AND_F')
 EVALUATION_DEADLINE = datetime.strptime(
     os.environ.get('DEADLINE', '25 May 2018 23:59'), '%d %b %Y %H:%M')
 EVALUATION_DEADLINE = pytz.utc.localize(EVALUATION_DEADLINE)

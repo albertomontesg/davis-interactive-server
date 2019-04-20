@@ -6,4 +6,4 @@ class LeaderboardCurve(models.Model):
         'evaluation.Session', on_delete=models.PROTECT, null=False)
     # Parameters to evaluate
     time = models.FloatField()
-    jaccard = models.FloatField()
+    metric = models.FloatField()

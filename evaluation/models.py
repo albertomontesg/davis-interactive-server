@@ -20,7 +20,7 @@ class Session(models.Model):
     # Parameters to evaluate
     auc = models.FloatField(null=True, blank=True)
     time_threshold = models.FloatField(null=True, blank=True)
-    jaccard_at_threshold = models.FloatField(null=True, blank=True)
+    metric_at_threshold = models.FloatField(null=True, blank=True)
 
     @staticmethod
     def get_or_create_session(user_id, session_id):
@@ -43,17 +43,17 @@ class Session(models.Model):
         self.save()
 
     def mark_completed(self, summary):
-        """ Mark session completed computing the time vs jaccard curve and
+        """ Mark session completed computing the time vs metric curve and
         storing it.
         """
         self.auc = summary['auc']
-        self.time_threshold = summary['jaccard_at_threshold']['threshold']
-        self.jaccard_at_threshold = summary['jaccard_at_threshold']['jaccard']
+        self.time_threshold = summary['metric_at_threshold']['threshold']
+        self.metric_at_threshold = summary['metric_at_threshold']['metric']
 
         # Add curve to LeaderboardCurve
         entries = [
-            LeaderboardCurve(session=self, time=t, jaccard=j) for t, j in zip(
-                summary['curve']['time'], summary['curve']['jaccard'])
+            LeaderboardCurve(session=self, time=t, metric=m) for t, m in zip(
+                summary['curve']['time'], summary['curve']['metric'])
         ]
         LeaderboardCurve.objects.bulk_create(entries)
 
@@ -70,20 +70,20 @@ class Session(models.Model):
             'participant': str(self.participant),
             'session_id': session_id,
             'auc': self.auc,
-            'jaccard_at_threshold': {
-                'jaccard': self.jaccard_at_threshold,
+            'metric_at_threshold': {
+                'metric': self.metric_at_threshold,
                 'threshold': self.time_threshold
             },
             'curve': {
                 'time': [],
-                'jaccard': []
+                'metric': []
             }
         }
         curve = LeaderboardCurve.objects.filter(
-            session=self).order_by('time').values('time', 'jaccard')
+            session=self).order_by('time').values('time', 'metric')
         for c in curve:
             summary['curve']['time'].append(c['time'])
-            summary['curve']['jaccard'].append(c['jaccard'])
+            summary['curve']['metric'].append(c['metric'])
 
         return summary
 
@@ -98,6 +98,8 @@ class ResultEntry(models.Model):
     object_id = models.IntegerField()
     frame = models.IntegerField()
     jaccard = models.FloatField()
+    contour = models.FloatField()
+    j_and_f = models.FloatField()
     timing = models.FloatField()
 
 
