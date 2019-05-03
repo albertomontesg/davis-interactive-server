@@ -22,11 +22,7 @@ EVALUATION_DEADLINE = pytz.utc.localize(EVALUATION_DEADLINE)
 assert EVALUATION_MAX_INTERACTIONS is not None
 
 # Email configurations
-EMAIL_SILENT = False
-EMAIL_SECRETS_DIR = os.environ.get('EMAIL_SECRETS_DIR')
-EMAIL_CLIENT_SECRET_FILE = 'client_secret.json'
-EMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.send'
-EMAIL_APPLICATION_NAME = 'Gmail API Python Send Email'
+EMAIL_SILENT = True
 
 DATABASES = {
     'default': {
@@ -35,7 +31,7 @@ DATABASES = {
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': os.getenv('DATABASE_PORT'),
         'CONN_MAX_AGE': 120,
     }
 }

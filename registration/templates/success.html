@@ -12,8 +12,10 @@ Registration Form
 {% block content %}
 	<h2 style="color:#0fad00">Registration Success</h2>
   <h4>Dear {{ participant.name }},</h4>
-  <p style="font-size:20px;color:#5C5C5C;">
-	Thank you for registering on the DAVIS Interactive Challenge. 
-	We have sent you an email with the key to participate.
+  <p>Thank you for registering on the DAVIS Interactive Challenge.</p> 
+  <p>Your user key to participate on the DAVIS Interactive challenge is:</p>
+  <p>{{ participant.user_id }}</p>
+  <p>Please save the given user key in a safe location. It will not be printed again. If you lose it, please contact the DAVIS Challenge organizers at davisvideochallenge@gmail.com.</p>
+  <p>Please try to always use the latest version of the package and visit http://interactive.davischallenge.org to read the documentation.
 	</p>
 {% endblock %}

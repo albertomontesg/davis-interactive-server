@@ -25,10 +25,6 @@ assert EVALUATION_MAX_INTERACTIONS is not None
 
 # New Email configurations
 EMAIL_SILENT = True
-EMAIL_SECRETS_DIR = os.path.join(BASE_DIR, '.credentials')
-EMAIL_CLIENT_SECRET_FILE = 'client_secret.json'
-EMAIL_SCOPE = 'https://www.googleapis.com/auth/gmail.send'
-EMAIL_APPLICATION_NAME = 'Gmail API Python Send Email'
 
 ALLOWED_HOSTS = ['*']
 STATIC_URL = 'https://storage.googleapis.com/davis-interactive-static/static/'

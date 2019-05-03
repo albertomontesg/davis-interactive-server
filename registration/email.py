@@ -7,10 +7,21 @@ import httplib2
 import oauth2client
 from apiclient import discovery, errors
 from django.conf import settings
+from django.core.mail import EmailMessage, send_mail
 from oauth2client import client, tools
 
 
 def send_message(sender, to, subject, msg):
+    """Send email using SMTP."""
+    if not settings.EMAIL_SILENT:
+        print(msg)
+        # send_mail(subject, msg, sender, recipient_list=[to])
+        return msg
+    print(msg)
+    return msg
+
+
+def _send_message(sender, to, subject, msg):
     """ Send email using Google Gmail API.
     """
     message = create_message_html(sender, to, subject, msg)

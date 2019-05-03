@@ -1,7 +1,7 @@
 GCLOUD_PROJECT:=$(shell gcloud config list project --format="value(core.project)")
 
-APP_NAME:="davis-interactive"
-VERSION:=0.1.17
+APP_NAME:=davis-interactive
+VERSION:=0.2.1
 
 .PHONY: build push run bash collectstatic
 
@@ -27,4 +27,4 @@ bash: build
 
 collectstatic:
 	./manage.py collectstatic --noinput
-	gsutil rsync -R static/ gs://davis-interactive-static/static
+	gsutil -m rsync -R static/ gs://davis-interactive-static/static
