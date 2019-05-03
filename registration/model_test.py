@@ -21,18 +21,6 @@ class ParticipantTestCase(TestCase):
         p = Participant.objects.get(email='name@example.com')
         self.assertEqual(str(p), 'Test name (Test Organization)')
 
-    @mock.patch('registration.models.send_message')
-    def test_send_email(self, mock_email):
-        self.assertEqual(mock_email.call_count, 0)
-        self.participant.email_participant('Subject Test',
-                                           'This is the message')
-        self.assertEqual(mock_email.call_count, 1)
-        print(mock_email.call_args)
-        _, to, subject, message = mock_email.call_args[0]
-        self.assertEqual(subject, 'Subject Test')
-        self.assertEqual(message, 'This is the message')
-        self.assertEqual(to, self.participant.email)
-
 
 class RegistrationFormTestCase(TestCase):
 
