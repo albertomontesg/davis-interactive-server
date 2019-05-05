@@ -38,12 +38,12 @@ def get_leaderboard(request):
         leaderboard['by_auc'].append(summary)
 
     query = Session.objects.filter(completed=True).values(
-        'participant__user_id', 'session_id', 'jaccard_at_threshold')
+        'participant__user_id', 'session_id', 'metric_at_threshold')
     df = pd.DataFrame.from_records(query).set_index('session_id')
     session_ids = df.groupby(
         'participant__user_id').idxmax().values.ravel().tolist()
     sessions = Session.objects.filter(
-        session_id__in=session_ids).order_by('-jaccard_at_threshold')
+        session_id__in=session_ids).order_by('-metric_at_threshold')
     for i, s in enumerate(sessions):
         pos = i + 1
         summary = s.get_summary(shorter_session_id=True)

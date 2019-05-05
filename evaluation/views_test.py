@@ -650,10 +650,10 @@ class TestIntegrationCase(TestCase):
         })
     @patch('evaluation.decorators.EvaluationService')
     @patch(
-        'davisinteractive.connector.remote.requests.post',
+        'davisinteractive.connector.remote._requests_retry_session.post',
         new=mock_requests('POST'))
     @patch(
-        'davisinteractive.connector.remote.requests.get',
+        'davisinteractive.connector.remote._requests_retry_session.get',
         new=mock_requests('GET'))
     def test_workflow(self, mock_service):
         mock_service.return_value = EvaluationService(
