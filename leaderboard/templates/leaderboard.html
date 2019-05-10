@@ -8,7 +8,7 @@
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Participant</td>
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Session ID</td>
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">AUC</td>
-      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J@60s</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J&amp;F@60s</td>
     </tr>
     {% for r in by_auc %}
     <tr>
@@ -16,14 +16,14 @@
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.participant }}</td>
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.session_id }}</td>
       <td class="highlight" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.auc | stringformat:".3f" }}</td>
-      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.jaccard_at_threshold.jaccard | stringformat:".3f" }}</td>
+      <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.metric_at_threshold.metric | stringformat:".3f" }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endblock %}
 
-{% block table_by_jaccard_threshold %}
+{% block table_by_metric_threshold %}
 <table id="tab" width="100%" style="border-spacing: 40px 10px; font-family: 'Raleway', sans-serif; margin-left: 0%;margin-right:0%;margin-bottom:40px;">
   <tbody>
     <tr>
@@ -31,15 +31,15 @@
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Participant</td>
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">Session ID</td>
       <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">AUC</td>
-      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J@60s</td>
+      <td class="over" style="border-bottom: 1px solid gray; border-top: 1px solid gray; text-align:right; color:#efefef; background: #a1a1a1; text-align: center;">J&amp;F@60s</td>
     </tr>
-    {% for r in by_jaccard_threshold %}
+    {% for r in by_metric_threshold %}
     <tr>
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.pos }}</td>
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.participant }}</td>
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.session_id }}</td>
       <td class="elements" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.auc | stringformat:".3f" }}</td>
-      <td class="highlight" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.jaccard_at_threshold.jaccard | stringformat:".3f" }}</td>
+      <td class="highlight" style="border-bottom: 1px solid gray; font-family: 'Courier New', Courier, monospace; font-size: 80%; text-align: center;">{{ r.metric_at_threshold.metric | stringformat:".3f" }}</td>
     </tr>
     {% endfor %}
   </tbody>

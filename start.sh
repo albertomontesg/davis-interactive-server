@@ -1,34 +1,36 @@
 #!/bin/bash
 
 function manage_app() {
-	python3 manage.py makemigrations
-	python3 manage.py migrate
+  python3 manage.py makemigrations
+  python3 manage.py migrate
 }
 
 function start_default() {
-	# use django runserver as development server here.
-	manage_app
-	python3 manage.py runserver 0.0.0.0:8000
+  # use django runserver as development server here.
+  manage_app
+  python3 manage.py runserver 0.0.0.0:8000
 }
 
 function start_gunicorn() {
-	NUM_WORKERS="${NUM_WORKERS:-4}"
-	PORT=${PORT:-8000}
-	# use gunicorn for production server here
-	manage_app
-	gunicorn server.wsgi \
-		-w "$NUM_WORKERS" \
-		-b 0.0.0.0:"$PORT" \
-		--log-level INFO \
-		--chdir=/app \
-		--log-file - \
-		--error-logfile -
+  NUM_WORKERS="${NUM_WORKERS:-4}"
+  PORT=${PORT:-8000}
+  TIMEOUT=${WORKER_TIMEOUT:-120}
+  # use gunicorn for production server here
+  manage_app
+  gunicorn server.wsgi \
+    -w "$NUM_WORKERS" \
+    -b 0.0.0.0:"$PORT" \
+    --log-level INFO \
+    --chdir=/app \
+    --timeout $TIMEOUT \
+    --log-file - \
+    --error-logfile -
 }
 
 if [ ! -z "$GUNICORN" ]; then
-	# use production server
-	start_gunicorn
+  # use production server
+  start_gunicorn
 else
-	# use development server
-	start_default
+  # use development server
+  start_default
 fi

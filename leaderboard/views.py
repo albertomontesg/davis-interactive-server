@@ -14,7 +14,7 @@ from evaluation.models import Participant, Session
 @xframe_options_exempt
 @require_GET
 def get_leaderboard(request):
-    leaderboard = {'by_auc': [], 'by_jaccard_threshold': []}
+    leaderboard = {'by_auc': [], 'by_metric_threshold': []}
 
     deadline = settings.EVALUATION_DEADLINE
 
@@ -48,7 +48,7 @@ def get_leaderboard(request):
         pos = i + 1
         summary = s.get_summary(shorter_session_id=True)
         summary['pos'] = pos
-        leaderboard['by_jaccard_threshold'].append(summary)
+        leaderboard['by_metric_threshold'].append(summary)
 
     if request.content_type == 'application/json':
         return JsonResponse(leaderboard)

@@ -2,12 +2,11 @@
 """
 import logging
 
+from davisinteractive.third_party import mask_api
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
-
-from davisinteractive.third_party import mask_api
 
 from .decorators import authorize, json_api, require_service
 from .models import Session
@@ -40,7 +39,8 @@ def get_health(_):
         'evaluation_parameters': {
             'subset': settings.EVALUATION_SUBSET,
             'max_time': settings.EVALUATION_MAX_TIME,
-            'max_interactions': settings.EVALUATION_MAX_INTERACTIONS
+            'max_interactions': settings.EVALUATION_MAX_INTERACTIONS,
+            'metric_to_optimize': settings.EVALUATION_METRIC_TO_OPTIMIZE
         }
     }
 
@@ -78,6 +78,12 @@ def post_predicted_masks(request, service, user_key, session_key):
     params['pred_masks'] = mask_api.decode_batch_masks(params['pred_masks'])
     params['user_key'] = user_key
     params['session_key'] = session_key
+
+    logger.info('[Session {}] Sequence: {}/{}\tPred masks shape: {}'.format(
+        session_key[:8], params['sequence'], params['scribble_idx'],
+        params['pred_masks'].shape))
+    logger.info('[Session {}] User key: {}\tInteraction: {}'.format(
+        session_key[:8], user_key[:8], params['interaction']))
 
     response = service.post_predicted_masks(**params)
     return response

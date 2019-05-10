@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import traceback
 from functools import wraps
 
@@ -55,18 +56,21 @@ def authorize(func):
         session_key = request.META.get('HTTP_SESSION_KEY')
         participant = Participant.objects.filter(user_id=user_key).first()
         if not user_key or not session_key or not participant:
-            return JsonResponse(
-                {
-                    'error':
-                    'Invalid user_key or session_key',
-                    'message': (f'user_key: {user_key}\tsession_key: '
-                                f'{session_key} not valid.')
-                },
-                status=401)
+            return JsonResponse({
+                'error':
+                'Invalid user_key or session_key',
+                'message': (f'user_key: {user_key}\tsession_key: '
+                            f'{session_key} not valid.')
+            },
+                                status=401)
 
         kwargs['user_key'] = user_key
         kwargs['session_key'] = session_key
+        t_s = time.time()
         response = func(request, *args, **kwargs)
+        t_e = time.time()
+        logger.info('[Session {}] {} Request time: {:.3f}s'.format(
+            session_key[:8], request.path, t_e - t_s))
         return response
 
     return decorator
