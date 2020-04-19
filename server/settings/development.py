@@ -19,7 +19,7 @@ EVALUATION_MAX_INTERACTIONS = int(os.environ.get('MAX_INTERACTIONS', 8))
 EVALUATION_TIME_THRESHOLD = int(os.environ.get('TIME_THRESHOLD', 60))
 EVALUATION_METRIC_TO_OPTIMIZE = os.environ.get('METRIC_TO_OPTIMIZE', 'J_AND_F')
 EVALUATION_DEADLINE = datetime.strptime(
-    os.environ.get('DEADLINE', '25 May 2018 23:59'), '%d %b %Y %H:%M')
+    os.environ.get('DEADLINE', '15 May 2020 23:59'), '%d %b %Y %H:%M')
 EVALUATION_DEADLINE = pytz.utc.localize(EVALUATION_DEADLINE)
 assert EVALUATION_MAX_INTERACTIONS is not None
 

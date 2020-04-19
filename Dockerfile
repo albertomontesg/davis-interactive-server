@@ -1,4 +1,4 @@
-FROM python:3.6.5
+FROM python:3.7.7
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y git gcc libglib2.0-0

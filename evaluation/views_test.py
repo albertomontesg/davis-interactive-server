@@ -16,9 +16,9 @@ from evaluation.storage import DBStorage
 from registration.models import Participant
 
 
-def mock_requests(method):
+class FakeSession(object):
 
-    def wrapper(*args, **kwargs):
+    def get(self, *args, **kwargs):
         client = Client()
         headers = kwargs.get('headers')
         if headers:
@@ -33,13 +33,24 @@ def mock_requests(method):
             kwargs['data'] = json.dumps(kwargs['json'])
             kwargs['content_type'] = 'application/json'
 
-        if method == 'GET':
-            return client.get(*args, **kwargs)
-        elif method == 'POST':
-            return client.post(*args, **kwargs)
-        raise ValueError('Invalid method value {method}')
+        return client.get(*args, **kwargs)
 
-    return wrapper
+    def post(self, *args, **kwargs):
+        client = Client()
+        headers = kwargs.get('headers')
+        if headers:
+            new_headers = {}
+            for k in headers:
+                n_k = 'HTTP_' + k.upper().replace('-', '_')
+                new_headers[n_k] = headers[k]
+            del kwargs['headers']
+            kwargs.update(new_headers)
+
+        if 'json' in kwargs:
+            kwargs['data'] = json.dumps(kwargs['json'])
+            kwargs['content_type'] = 'application/json'
+
+        return client.post(*args, **kwargs)
 
 
 class HealthViewTestCase(TestCase):
@@ -650,11 +661,8 @@ class TestIntegrationCase(TestCase):
         })
     @patch('evaluation.decorators.EvaluationService')
     @patch(
-        'davisinteractive.connector.remote._requests_retry_session.post',
-        new=mock_requests('POST'))
-    @patch(
-        'davisinteractive.connector.remote._requests_retry_session.get',
-        new=mock_requests('GET'))
+        'davisinteractive.connector.remote._requests_retry_session',
+        new=FakeSession)
     def test_workflow(self, mock_service):
         mock_service.return_value = EvaluationService(
             'train',
