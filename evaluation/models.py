@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -48,12 +49,14 @@ class Session(models.Model):
         """
         self.auc = summary['auc']
         self.time_threshold = summary['metric_at_threshold']['threshold']
-        self.metric_at_threshold = summary['metric_at_threshold']['metric']
+        self.metric_at_threshold = summary['metric_at_threshold'][
+            settings.EVALUATION_METRIC_TO_OPTIMIZE]
 
         # Add curve to LeaderboardCurve
         entries = [
             LeaderboardCurve(session=self, time=t, metric=m) for t, m in zip(
-                summary['curve']['time'], summary['curve']['metric'])
+                summary['curve']['time'], summary['curve'][
+                    settings.EVALUATION_METRIC_TO_OPTIMIZE])
         ]
         LeaderboardCurve.objects.bulk_create(entries)
 
@@ -72,11 +75,11 @@ class Session(models.Model):
             'auc': self.auc,
             'metric_at_threshold': {
                 'metric': self.metric_at_threshold,
-                'threshold': self.time_threshold
+                'threshold': self.time_threshold,
             },
             'curve': {
                 'time': [],
-                'metric': []
+                'metric': [],
             }
         }
         curve = LeaderboardCurve.objects.filter(
