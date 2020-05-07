@@ -6,6 +6,13 @@ from .storage import DBStorage
 
 logging.set_info_level(2)
 
+_ROBOT_DEFAULT_PARAMETERS = {
+    'kernel_size': .1,
+    'max_kernel_radius': 16,
+    'min_nb_nodes': 2,
+    'nb_points': 1000,
+}
+
 
 class EvaluationService(object):
     """ Singleton wrapper over EvaluationService class"""
@@ -16,6 +23,7 @@ class EvaluationService(object):
             EvaluationService.instance = _EvaluationService(
                 settings.EVALUATION_SUBSET,
                 storage=DBStorage,
+                robot_parameters=_ROBOT_DEFAULT_PARAMETERS,
                 davis_root=settings.EVALUATION_DAVIS_ROOT,
                 max_t=settings.EVALUATION_MAX_TIME,
                 max_i=settings.EVALUATION_MAX_INTERACTIONS,
