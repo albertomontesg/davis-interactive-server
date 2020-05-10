@@ -6,14 +6,40 @@ from .models import ResultEntry, Session
 
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    fields = ('session_id', 'participant', 'start_timestamp', 'completed',
-              'auc', 'time_threshold', 'metric_at_threshold')
-    list_display = ('participant', 'hash_session_id', 'start_timestamp',
-                    'completed', 'completed_percentage', 'auc',
-                    'metric_at_threshold')
-    list_filter = ('participant', 'start_timestamp', 'completed')
-    readonly_fields = ('session_id', 'participant', 'start_timestamp', 'auc',
-                       'time_threshold', 'metric_at_threshold')
+    fields = (
+        'session_id',
+        'participant',
+        'start_timestamp',
+        'completed',
+        'auc',
+        'time_threshold',
+        'metric_at_threshold',
+        'show_at_leaderboard',
+    )
+    list_display = (
+        'participant',
+        'hash_session_id',
+        'start_timestamp',
+        'completed',
+        'completed_percentage',
+        'auc',
+        'metric_at_threshold',
+        'show_at_leaderboard',
+    )
+    list_filter = (
+        'participant',
+        'start_timestamp',
+        'completed',
+        'show_at_leaderboard',
+    )
+    readonly_fields = (
+        'session_id',
+        'participant',
+        'start_timestamp',
+        'auc',
+        'time_threshold',
+        'metric_at_threshold',
+    )
     ordering = ['-start_timestamp']
     actions = []
 

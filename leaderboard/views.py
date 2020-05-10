@@ -19,7 +19,8 @@ def get_leaderboard(request):
     deadline = settings.EVALUATION_DEADLINE
 
     query = Session.objects.filter(
-        completed=True, start_timestamp__lte=deadline).values(
+        completed=True,
+        show_at_leaderboard=True, start_timestamp__lte=deadline).values(
             'participant__user_id', 'session_id', 'auc')
     if len(query) == 0 and request.content_type == 'application/json':
         return JsonResponse(leaderboard)
@@ -37,8 +38,10 @@ def get_leaderboard(request):
         summary['pos'] = pos
         leaderboard['by_auc'].append(summary)
 
-    query = Session.objects.filter(completed=True).values(
-        'participant__user_id', 'session_id', 'metric_at_threshold')
+    query = Session.objects.filter(
+        completed=True,
+        show_at_leaderboard=True, start_timestamp__lte=deadline).values(
+            'participant__user_id', 'session_id', 'metric_at_threshold')
     df = pd.DataFrame.from_records(query).set_index('session_id')
     session_ids = df.groupby(
         'participant__user_id').idxmax().values.ravel().tolist()

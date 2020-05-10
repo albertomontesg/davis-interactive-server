@@ -23,6 +23,8 @@ class Session(models.Model):
     time_threshold = models.FloatField(null=True, blank=True)
     metric_at_threshold = models.FloatField(null=True, blank=True)
 
+    show_at_leaderboard = models.BooleanField(default=True)
+
     @staticmethod
     def get_or_create_session(user_id, session_id):
         session = Session.objects.filter(session_id=session_id).first()
