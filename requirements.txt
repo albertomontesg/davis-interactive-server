@@ -1,4 +1,4 @@
-Django==2.2.13
+Django==2.2.24
 gunicorn==19.7.1
 psycopg2-binary==2.8.5
 django_widget_tweaks==1.4.2
